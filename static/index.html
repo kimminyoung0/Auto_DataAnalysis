@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Data Analysis</title>
+  <style>
+    :root {
+      --row-h: 32px;
+      --col-w: 120px;
+      --visible-rows: 30;
+      --visible-cols: 8;
+      --header-h: 40px;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+
+    h1 { margin: 0 0 0.5rem; font-size: 1.75rem; }
+    .lead { color: var(--muted); margin: 0 0 1.5rem; }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      padding: 0.55rem 1rem;
+      font-size: 0.95rem;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    button.secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    button.analyze-btn {
+      width: 100%;
+      margin-top: 0.5rem;
+      background: #059669;
+    }
+
+    .status { margin-top: 0.75rem; font-size: 0.9rem; color: var(--muted); }
+    .status.error { color: #dc2626; }
+
+    #app-section { display: none; margin-top: 1.5rem; }
+    #app-section.visible { display: block; }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+
+    .tab-btn {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      border-radius: 8px 8px 0 0;
+      padding: 0.6rem 1rem;
+      font-weight: 500;
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: var(--accent);
+      box-shadow: 0 -1px 0 var(--border) inset;
+      border: 1px solid var(--border);
+      border-bottom-color: #fff;
+      margin-bottom: -2px;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    .upload-box {
+      background: #fff;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .file-input-hidden {
+      position: absolute;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .upload-trigger-btn {
+      min-width: 140px;
+    }
+
+    .meta {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .preview-layout {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+
+    .filter-panel {
+      width: min(100%, 320px);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 1px 3px rgb(15 23 42 / 6%);
+    }
+
+    .filter-panel h2 { margin: 0 0 0.35rem; font-size: 1rem; }
+    .filter-panel p { margin: 0 0 0.75rem; font-size: 0.8rem; color: var(--muted); }
+    .filter-panel label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; }
+
+    .filter-panel input[type="text"] {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+    }
+
+    .filter-actions { display: flex; gap: 0.5rem; margin-top: 0.65rem; flex-wrap: wrap; }
+    .filter-actions button { flex: 1; min-width: 80px; }
+
+    .expr-active { margin-top: 0.65rem; font-size: 0.8rem; color: var(--muted); word-break: break-all; }
+    .expr-active code { font-family: Consolas, monospace; color: var(--accent); }
+
+    .table-area {
+      flex: 1;
+      min-width: min(100%, calc(var(--visible-cols) * var(--col-w) + 2px));
+    }
+
+    .table-viewport.data-preview-box {
+      position: relative;
+      width: 100%;
+      height: calc(var(--header-h) + var(--visible-rows) * var(--row-h) + 2px);
+      overflow: auto;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px rgb(15 23 42 / 4%);
+    }
+
+    .data-empty-msg {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .table-viewport.has-data .data-empty-msg {
+      display: none;
+    }
+
+    .table-viewport.has-data .data-table {
+      position: relative;
+      z-index: 1;
+    }
+
+    .stats-table-viewport {
+      max-height: 400px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 1rem;
+    }
+
+    table.data-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 0.85rem;
+    }
+
+    table.data-table th,
+    table.data-table td {
+      min-width: var(--col-w);
+      max-width: var(--col-w);
+      height: var(--row-h);
+      padding: 0 0.6rem;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: #fff;
+    }
+
+    table.stats-table th,
+    table.stats-table td {
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    table.stats-table thead th {
+      background: #f1f5f9;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    table.data-table tbody tr.virtual-spacer td {
+      padding: 0;
+      border: none;
+      background: transparent;
+      min-height: 0;
+      height: auto;
+      line-height: 0;
+    }
+
+    table.data-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #f1f5f9;
+      font-weight: 600;
+      height: var(--header-h);
+    }
+
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 { margin: 0 0 0.5rem; font-size: 1.05rem; }
+    .card h4 { margin: 1rem 0 0.5rem; font-size: 0.95rem; color: var(--text); }
+
+    .shape-badge {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .var-list { margin: 0.25rem 0 0.75rem; padding-left: 1.25rem; }
+    .var-list li { margin: 0.2rem 0; font-family: Consolas, monospace; font-size: 0.9rem; }
+    .var-list.empty { list-style: none; padding-left: 0; color: var(--muted); }
+
+    .placeholder {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+      background: #fff;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+    }
+
+    /* Distribution 탭 UI */
+    .dist-layout {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .dist-left { flex: 1; min-width: min(600px, 100%); }
+    .dist-right { width: min(360px, 100%); }
+
+    .field { margin: 0.75rem 0; }
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+
+    select, input[type="date"] {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .checkbox-list {
+      display: flex;
+      gap: 0.35rem 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.6rem;
+      background: #fff;
+      font-size: 0.85rem;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .quick-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+    }
+
+    .dist-plot-wrap { margin-top: 1rem; }
+    .dist-plot {
+      width: 100%;
+      min-height: 520px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+  </style>
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Auto Data Analysis</h1>
+    <p class="lead">데이터 업로드 · pandas 필터 · 자동분석을 탭으로 나눠 사용합니다.</p>
+    <p class="status" id="status"></p>
+
+    <section id="app-section" class="visible">
+      <nav class="tabs" role="tablist">
+        <button type="button" class="tab-btn active" data-tab="data">Data</button>
+        <button type="button" class="tab-btn" data-tab="statistics">Statistics</button>
+        <button type="button" class="tab-btn" data-tab="numeric">Numeric</button>
+        <button type="button" class="tab-btn" data-tab="categorical">Categorical</button>
+        <button type="button" class="tab-btn" data-tab="distribution">Distribution</button>
+        <button type="button" class="tab-btn" data-tab="analysis">Analysis</button>
+      </nav>
+
+      <!-- Data 탭 -->
+      <div id="tab-data" class="tab-panel active" role="tabpanel">
+        <div class="upload-box">
+          <input type="file" id="file-input" class="file-input-hidden" accept=".csv,.xlsx,.xls" />
+          <button type="button" id="upload-trigger-btn" class="upload-trigger-btn">파일 업로드</button>
+        </div>
+        <div class="meta" id="meta"></div>
+
+        <div class="preview-layout">
+          <div class="table-area">
+            <div class="table-viewport data-preview-box" id="viewport">
+              <p class="data-empty-msg" id="data-empty-msg"></p>
+              <table class="data-table">
+                <thead id="table-head"></thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <aside class="filter-panel">
+            <h2>pandas 필터</h2>
+            <p>업로드 데이터 = <strong>df</strong> · <strong>pd</strong> · <strong>np</strong></p>
+            <label for="pandas-expr">표현식</label>
+            <input type="text" id="pandas-expr" value="df" placeholder="df.head(10)" spellcheck="false" />
+            <div class="filter-actions">
+              <button type="button" id="apply-expr-btn">적용</button>
+              <button type="button" class="secondary" id="reset-expr-btn">전체 (df)</button>
+            </div>
+            <button type="button" class="analyze-btn" id="auto-analyze-btn">자동분석</button>
+            <p class="expr-active">적용 중: <code id="active-expr">df</code></p>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Statistics 탭 -->
+      <div id="tab-statistics" class="tab-panel" role="tabpanel">
+        <div id="statistics-content" class="placeholder">Data 탭에서 자동분석을 실행하세요.</div>
+      </div>
+
+      <!-- Numeric 탭 -->
+      <div id="tab-numeric" class="tab-panel" role="tabpanel">
+        <div id="numeric-content" class="placeholder">자동분석 후 수치형 변수 요약이 표시됩니다.</div>
+      </div>
+
+      <!-- Categorical 탭 -->
+      <div id="tab-categorical" class="tab-panel" role="tabpanel">
+        <div id="categorical-content" class="placeholder">자동분석 후 범주형 변수 요약이 표시됩니다.</div>
+      </div>
+
+      <!-- Distribution 탭 -->
+      <div id="tab-distribution" class="tab-panel" role="tabpanel">
+        <div class="dist-layout">
+          <div class="dist-left">
+            <div class="card">
+              <h3>분포 설정</h3>
+              <div class="field">
+                <label for="dist-chart-type">그래프 타입</label>
+                <select id="dist-chart-type">
+                  <option value="kde">KDE(밀도)</option>
+                  <option value="bar">막대(히스토그램)</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="dist-numeric-col">수치형 컬럼</label>
+                <select id="dist-numeric-col"></select>
+              </div>
+
+              <div class="field">
+                <label>범주형(그룹바이) 컬럼</label>
+                <div id="dist-groupby-checkboxes" class="checkbox-list"></div>
+              </div>
+
+              <div class="field">
+                <label for="dist-max-groups">최대 그룹 수</label>
+                <select id="dist-max-groups">
+                  <option value="3">3</option>
+                  <option value="5" selected>5</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+
+              <button type="button" id="dist-plot-btn" class="analyze-btn" style="width:100%; margin-top: 0.75rem;">
+                분포 그리기
+              </button>
+              <p class="status" id="dist-status" style="margin-top:0.6rem;"></p>
+            </div>
+          </div>
+
+          <aside class="dist-right">
+            <div class="card">
+              <h3>날짜 필터</h3>
+              <p style="margin-top:0; color: var(--muted); font-size:0.85rem;">
+                업로드 시 날짜/시간 컬럼을 자동 탐지해서 변환합니다.
+              </p>
+
+              <div class="field">
+                <label for="dist-date-col">날짜 컬럼</label>
+                <select id="dist-date-col"></select>
+              </div>
+
+              <div class="field">
+                <label for="dist-start-date">시작일</label>
+                <input type="date" id="dist-start-date" />
+              </div>
+              <div class="field">
+                <label for="dist-end-date">끝일</label>
+                <input type="date" id="dist-end-date" />
+              </div>
+
+              <div class="quick-buttons">
+                <button type="button" class="secondary" data-range="7d">최근 7일</button>
+                <button type="button" class="secondary" data-range="1m">최근 1개월</button>
+                <button type="button" class="secondary" data-range="3m">최근 3개월</button>
+                <button type="button" class="secondary" data-range="6m">최근 6개월</button>
+              </div>
+
+              <div class="hint" style="margin-top:0.75rem;">
+                날짜 범위를 고른 뒤 “분포 그리기”를 누르세요.
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="dist-plot-wrap">
+          <div id="dist-plot" class="dist-plot"></div>
+        </div>
+      </div>
+
+      <!-- Analysis 탭 -->
+      <div id="tab-analysis" class="tab-panel" role="tabpanel">
+        <div class="placeholder">Analysis 탭 — 심화 분석 기능 준비 중입니다.</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("file-input");
+    const uploadTriggerBtn = document.getElementById("upload-trigger-btn");
+    const statusEl = document.getElementById("status");
+    const appSection = document.getElementById("app-section");
+    const metaEl = document.getElementById("meta");
+    const tableHead = document.getElementById("table-head");
+    const tableBody = document.getElementById("table-body");
+    const viewport = document.getElementById("viewport");
+    const dataEmptyMsg = document.getElementById("data-empty-msg");
+    const pandasExprInput = document.getElementById("pandas-expr");
+    const applyExprBtn = document.getElementById("apply-expr-btn");
+    const resetExprBtn = document.getElementById("reset-expr-btn");
+    const autoAnalyzeBtn = document.getElementById("auto-analyze-btn");
+    const activeExprEl = document.getElementById("active-expr");
+
+    let tableData = { columns: [], rows: [] };
+    let sessionId = null;
+    let currentFilename = "";
+    let analysisData = null;
+
+    const ROW_H = 32;
+    const VIRTUAL_BUFFER = 8;
+    let virtualScrollScheduled = false;
+
+    function setStatus(msg, isError = false) {
+      statusEl.textContent = msg;
+      statusEl.classList.toggle("error", isError);
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
+      });
+      document.querySelectorAll(".tab-panel").forEach((panel) => {
+        panel.classList.toggle("active", panel.id === `tab-${tabName}`);
+      });
+
+      if (tabName === "distribution") {
+        maybeLoadDistributionMeta();
+      }
+    }
+
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+    });
+
+    function buildStatsTable(tablePayload) {
+      const table = document.createElement("table");
+      table.className = "stats-table";
+      const thead = document.createElement("thead");
+      const headRow = document.createElement("tr");
+      tablePayload.columns.forEach((col) => {
+        const th = document.createElement("th");
+        th.textContent = col;
+        headRow.appendChild(th);
+      });
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+      tablePayload.rows.forEach((row) => {
+        const tr = document.createElement("tr");
+        row.forEach((cell) => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      return table;
+    }
+
+    function wrapStatsTable(tableEl) {
+      const wrap = document.createElement("div");
+      wrap.className = "stats-table-viewport";
+      wrap.appendChild(tableEl);
+      return wrap;
+    }
+
+    function renderVarList(items) {
+      if (!items || !items.length) {
+        const p = document.createElement("p");
+        p.className = "var-list empty";
+        p.textContent = "(없음)";
+        return p;
+      }
+      const ul = document.createElement("ul");
+      ul.className = "var-list";
+      items.forEach((name) => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+
+    function renderAnalysisTabs(data) {
+      analysisData = data;
+      const { shape, variables, describes } = data;
+
+      // Statistics 탭
+      const statsRoot = document.getElementById("statistics-content");
+      statsRoot.innerHTML = "";
+      statsRoot.classList.remove("placeholder");
+
+      const overview = document.createElement("div");
+      overview.className = "card";
+      overview.innerHTML = "<h3>데이터 개요</h3>";
+      const badge = document.createElement("div");
+      badge.className = "shape-badge";
+      badge.textContent = `${shape.rows} rows × ${shape.columns} columns`;
+      overview.appendChild(badge);
+
+      const groups = [
+        ["날짜·시간 변수", variables.datetime],
+        ["범주형 변수", variables.categorical],
+        ["수치형 변수", variables.numeric],
+      ];
+      groups.forEach(([title, cols]) => {
+        const h4 = document.createElement("h4");
+        h4.textContent = title;
+        overview.appendChild(h4);
+        overview.appendChild(renderVarList(cols));
+      });
+      statsRoot.appendChild(overview);
+
+      const allCols = [
+        ...variables.datetime,
+        ...variables.categorical,
+        ...variables.numeric,
+      ];
+      allCols.forEach((colName) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        const h3 = document.createElement("h3");
+        h3.textContent = `${colName} — describe()`;
+        card.appendChild(h3);
+        if (describes[colName]) {
+          card.appendChild(wrapStatsTable(buildStatsTable(describes[colName])));
+        }
+        statsRoot.appendChild(card);
+      });
+
+      // Numeric 탭
+      const numRoot = document.getElementById("numeric-content");
+      numRoot.innerHTML = "";
+      if (!variables.numeric.length) {
+        numRoot.className = "placeholder";
+        numRoot.textContent = "수치형 변수가 없습니다.";
+      } else {
+        numRoot.className = "";
+        const numCard = document.createElement("div");
+        numCard.className = "card";
+        numCard.innerHTML = "<h3>수치형 변수 목록</h3>";
+        numCard.appendChild(renderVarList(variables.numeric));
+        numRoot.appendChild(numCard);
+
+        if (data.numeric_summary) {
+          const sumCard = document.createElement("div");
+          sumCard.className = "card";
+          sumCard.innerHTML = "<h3>수치형 describe() 요약</h3>";
+          sumCard.appendChild(wrapStatsTable(buildStatsTable(data.numeric_summary)));
+          numRoot.appendChild(sumCard);
+        }
+
+        variables.numeric.forEach((colName) => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `<h3>${colName}</h3>`;
+          if (describes[colName]) {
+            card.appendChild(wrapStatsTable(buildStatsTable(describes[colName])));
+          }
+          numRoot.appendChild(card);
+        });
+      }
+
+      // Categorical 탭
+      const catRoot = document.getElementById("categorical-content");
+      catRoot.innerHTML = "";
+      const catCols = [...variables.categorical, ...variables.datetime];
+      if (!catCols.length) {
+        catRoot.className = "placeholder";
+        catRoot.textContent = "범주형·날짜 변수가 없습니다.";
+      } else {
+        catRoot.className = "";
+        const catCard = document.createElement("div");
+        catCard.className = "card";
+        catCard.innerHTML = "<h3>범주형·날짜 변수 목록</h3>";
+        catCard.appendChild(renderVarList(catCols));
+        catRoot.appendChild(catCard);
+
+        catCols.forEach((colName) => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `<h3>${colName} — describe()</h3>`;
+          if (describes[colName]) {
+            card.appendChild(wrapStatsTable(buildStatsTable(describes[colName])));
+          }
+          catRoot.appendChild(card);
+        });
+      }
+    }
+
+    function updateMeta(data) {
+      let meta = `파일: ${currentFilename} · ${data.total_rows}행 × ${data.total_columns}열`;
+      if (data.display_rows !== undefined && data.display_rows < data.total_rows) {
+        meta += ` (표에 ${data.display_rows}행)`;
+      }
+      metaEl.textContent = meta;
+    }
+
+    function renderTableHeader(columns) {
+      tableHead.innerHTML = "";
+      const headRow = document.createElement("tr");
+      columns.forEach((col) => {
+        const th = document.createElement("th");
+        th.textContent = col;
+        th.title = col;
+        headRow.appendChild(th);
+      });
+      tableHead.appendChild(headRow);
+    }
+
+    function createSpacerRow(colspan, heightPx) {
+      const tr = document.createElement("tr");
+      tr.className = "virtual-spacer";
+      tr.setAttribute("aria-hidden", "true");
+      const td = document.createElement("td");
+      td.colSpan = colspan;
+      td.style.height = `${heightPx}px`;
+      tr.appendChild(td);
+      return tr;
+    }
+
+    /** 화면에 보이는 행만 DOM에 그림 (스크롤 시 갱신) */
+    function renderVirtualRows() {
+      const { columns, rows } = tableData;
+      if (!rows?.length || !columns?.length) return;
+
+      const scrollTop = viewport.scrollTop;
+      const viewportH = viewport.clientHeight - 40; // thead 높이 제외
+      const startRow = Math.max(0, Math.floor(scrollTop / ROW_H) - VIRTUAL_BUFFER);
+      const visibleCount = Math.ceil(viewportH / ROW_H) + VIRTUAL_BUFFER * 2;
+      const endRow = Math.min(rows.length, startRow + visibleCount);
+
+      const fragment = document.createDocumentFragment();
+      fragment.appendChild(createSpacerRow(columns.length, startRow * ROW_H));
+
+      for (let ri = startRow; ri < endRow; ri++) {
+        const tr = document.createElement("tr");
+        rows[ri].forEach((cell) => {
+          const td = document.createElement("td");
+          td.textContent = cell;
+          td.title = cell;
+          tr.appendChild(td);
+        });
+        fragment.appendChild(tr);
+      }
+
+      fragment.appendChild(createSpacerRow(columns.length, (rows.length - endRow) * ROW_H));
+      tableBody.innerHTML = "";
+      tableBody.appendChild(fragment);
+    }
+
+    function scheduleVirtualRender() {
+      if (virtualScrollScheduled) return;
+      virtualScrollScheduled = true;
+      requestAnimationFrame(() => {
+        virtualScrollScheduled = false;
+        renderVirtualRows();
+      });
+    }
+
+    function renderTable(data) {
+      tableData = data;
+      if (data.session_id) sessionId = data.session_id;
+      if (data.expression) {
+        activeExprEl.textContent = data.expression;
+        pandasExprInput.value = data.expression;
+      }
+
+      const hasRows = data.rows && data.rows.length > 0;
+      viewport.classList.toggle("has-data", hasRows);
+
+      if (!hasRows) {
+        tableHead.innerHTML = "";
+        tableBody.innerHTML = "";
+        return;
+      }
+
+      renderTableHeader(data.columns);
+      viewport.scrollTop = 0;
+      renderVirtualRows();
+    }
+
+    function clearTable() {
+      tableHead.innerHTML = "";
+      tableBody.innerHTML = "";
+      viewport.classList.remove("has-data");
+      viewport.scrollTop = 0;
+      tableData = { columns: [], rows: [] };
+    }
+
+    viewport.addEventListener("scroll", scheduleVirtualRender);
+
+    async function parseError(res, data) {
+      const detail = Array.isArray(data.detail)
+        ? data.detail.map((d) => d.msg || d).join(", ")
+        : data.detail;
+      throw new Error(detail || "요청 실패");
+    }
+
+    async function runQuery(expression) {
+      if (!sessionId) {
+        setStatus("먼저 파일을 업로드하세요.", true);
+        return;
+      }
+      applyExprBtn.disabled = true;
+      setStatus("표현식 실행 중…");
+      try {
+        const res = await fetch("/query", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: sessionId, expression }),
+        });
+        const data = await res.json();
+        if (!res.ok) await parseError(res, data);
+        renderTable(data);
+        updateMeta(data);
+        setStatus(`적용됨: ${data.expression}`);
+      } catch (err) {
+        setStatus(err.message, true);
+      } finally {
+        applyExprBtn.disabled = false;
+      }
+    }
+
+    async function runAutoAnalyze() {
+      if (!sessionId) {
+        setStatus("먼저 파일을 업로드하세요.", true);
+        return;
+      }
+      autoAnalyzeBtn.disabled = true;
+      setStatus("자동분석 실행 중…");
+      try {
+        const res = await fetch("/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: sessionId }),
+        });
+        const data = await res.json();
+        if (!res.ok) await parseError(res, data);
+        renderAnalysisTabs(data);
+        switchTab("statistics");
+        setStatus(
+          `자동분석 완료: ${data.shape.rows}행 × ${data.shape.columns}열 · Statistics 탭을 확인하세요.`
+        );
+      } catch (err) {
+        setStatus(err.message, true);
+      } finally {
+        autoAnalyzeBtn.disabled = false;
+      }
+    }
+
+    applyExprBtn.addEventListener("click", () => runQuery(pandasExprInput.value.trim() || "df"));
+    resetExprBtn.addEventListener("click", () => { pandasExprInput.value = "df"; runQuery("df"); });
+    pandasExprInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); runQuery(pandasExprInput.value.trim() || "df"); }
+    });
+    autoAnalyzeBtn.addEventListener("click", runAutoAnalyze);
+
+    async function uploadSelectedFile() {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+
+      fileInput.disabled = true;
+      uploadTriggerBtn.disabled = true;
+      setStatus("업로드 중…");
+      const form = new FormData();
+      form.append("file", file);
+      try {
+        const res = await fetch("/upload", { method: "POST", body: form });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "업로드 실패");
+
+        currentFilename = data.filename || "";
+        analysisData = null;
+        // Distribution 탭 컬럼/날짜 메타를 다시 로딩
+        distMetaLoaded = false;
+        distDateBounds = null;
+        if (distNumericColEl) distNumericColEl.innerHTML = "";
+        if (distGroupCheckboxesEl) distGroupCheckboxesEl.innerHTML = "";
+        if (distDateColEl) distDateColEl.innerHTML = "";
+        const distPlotEl = document.getElementById("dist-plot");
+        if (distPlotEl) distPlotEl.innerHTML = "";
+
+        pandasExprInput.value = "df";
+        activeExprEl.textContent = "df";
+        renderTable(data);
+        appSection.classList.add("visible");
+        switchTab("data");
+        updateMeta(data);
+
+        document.getElementById("statistics-content").innerHTML = "Data 탭에서 자동분석을 실행하세요.";
+        document.getElementById("statistics-content").className = "placeholder";
+        document.getElementById("numeric-content").innerHTML = "자동분석 후 수치형 변수 요약이 표시됩니다.";
+        document.getElementById("numeric-content").className = "placeholder";
+        document.getElementById("categorical-content").innerHTML = "자동분석 후 범주형 변수 요약이 표시됩니다.";
+        document.getElementById("categorical-content").className = "placeholder";
+
+        setStatus("업로드 완료. pandas 필터 또는 자동분석을 사용하세요.");
+      } catch (err) {
+        setStatus(err.message, true);
+      } finally {
+        fileInput.disabled = false;
+        uploadTriggerBtn.disabled = false;
+      }
+    }
+
+    uploadTriggerBtn.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", () => uploadSelectedFile());
+    clearTable();
+
+    // -----------------------------
+    // Distribution tab
+    // -----------------------------
+    let distMetaLoaded = false;
+    let distDateBounds = null;
+
+    const distChartTypeEl = document.getElementById("dist-chart-type");
+    const distNumericColEl = document.getElementById("dist-numeric-col");
+    const distGroupCheckboxesEl = document.getElementById("dist-groupby-checkboxes");
+    const distMaxGroupsEl = document.getElementById("dist-max-groups");
+    const distDateColEl = document.getElementById("dist-date-col");
+    const distStartDateEl = document.getElementById("dist-start-date");
+    const distEndDateEl = document.getElementById("dist-end-date");
+    const distPlotBtn = document.getElementById("dist-plot-btn");
+    const distStatusEl = document.getElementById("dist-status");
+
+    function distSetStatus(msg, isError = false) {
+      distStatusEl.textContent = msg || "";
+      distStatusEl.classList.toggle("error", isError);
+    }
+
+    function isoToDateObj(isoDate) {
+      // YYYY-MM-DD -> Date (로컬 기준)
+      const [y, m, d] = isoDate.split("-").map((x) => Number(x));
+      return new Date(y, m - 1, d);
+    }
+
+    function setDateInputs(startISO, endISO) {
+      if (startISO) distStartDateEl.value = startISO;
+      if (endISO) distEndDateEl.value = endISO;
+    }
+
+    function applyQuickRange(range) {
+      const dc = distDateColEl?.value;
+      const bounds = (dc && distDateBounds && distDateBounds[dc]) ? distDateBounds[dc] : null;
+      if (!bounds?.max) return;
+      const end = isoToDateObj(bounds.max);
+      const msPerDay = 24 * 60 * 60 * 1000;
+
+      let days = 0;
+      if (range === "7d") days = 7;
+      if (range === "1m") days = 30;
+      if (range === "3m") days = 90;
+      if (range === "6m") days = 180;
+
+      const start = new Date(end.getTime() - days * msPerDay);
+      const toISO = (dt) => dt.toISOString().slice(0, 10);
+      setDateInputs(toISO(start), toISO(end));
+    }
+
+    distPlotBtn?.addEventListener("click", async () => {
+      if (!sessionId) {
+        distSetStatus("먼저 Data 탭에서 파일을 업로드하세요.", true);
+        return;
+      }
+      const numericCol = distNumericColEl.value;
+      if (!numericCol) {
+        distSetStatus("수치형 컬럼을 선택하세요.", true);
+        return;
+      }
+
+      const group_cols = Array.from(
+        distGroupCheckboxesEl.querySelectorAll("input[type='checkbox']:checked")
+      ).map((cb) => cb.value);
+
+      const payload = {
+        session_id: sessionId,
+        date_col: distDateColEl?.value || null,
+        numeric_col: numericCol,
+        group_cols,
+        date_start: distStartDateEl.value || null,
+        date_end: distEndDateEl.value || null,
+        max_groups: Number(distMaxGroupsEl.value || 5),
+      };
+
+      distPlotBtn.disabled = true;
+      distSetStatus("데이터를 불러오는 중…");
+      try {
+        const res = await fetch("/distribution/data", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "분포 데이터 요청 실패");
+
+        renderDistributionPlot({
+          chartType: distChartTypeEl.value,
+          numericCol,
+          groups: data.groups || [],
+        });
+        distSetStatus(
+          `필터 완료: ${data.filtered_rows} rows · ${data.groups.length} 그룹`
+        );
+      } catch (err) {
+        distSetStatus(err.message || String(err), true);
+      } finally {
+        distPlotBtn.disabled = false;
+      }
+    });
+
+    document.querySelectorAll("#tab-distribution .quick-buttons button").forEach((btn) => {
+      btn.addEventListener("click", () => applyQuickRange(btn.dataset.range));
+    });
+
+    async function maybeLoadDistributionMeta() {
+      if (distMetaLoaded) return;
+      if (!sessionId) return;
+
+      distSetStatus("컬럼 목록 불러오는 중…");
+      try {
+        const res = await fetch("/distribution/meta", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: sessionId }),
+        });
+        const meta = await res.json();
+        if (!res.ok) throw new Error(meta.detail || "메타 로딩 실패");
+
+        distMetaLoaded = true;
+        distDateBounds = meta.date_bounds || {};
+
+        distNumericColEl.innerHTML = "";
+        (meta.numeric_cols || []).forEach((c) => {
+          const opt = document.createElement("option");
+          opt.value = c;
+          opt.textContent = c;
+          distNumericColEl.appendChild(opt);
+        });
+
+        // 기본 선택(첫 컬럼)
+        if (meta.numeric_cols?.length) distNumericColEl.value = meta.numeric_cols[0];
+
+        distGroupCheckboxesEl.innerHTML = "";
+        (meta.categorical_cols || []).forEach((c) => {
+          const id = `grp_${String(c).replace(/[^a-zA-Z0-9_]/g, "_")}`;
+          const wrap = document.createElement("label");
+          wrap.className = "checkbox-item";
+          const input = document.createElement("input");
+          input.type = "checkbox";
+          input.value = c;
+          input.id = id;
+          const span = document.createElement("span");
+          span.textContent = c;
+          wrap.appendChild(input);
+          wrap.appendChild(span);
+          distGroupCheckboxesEl.appendChild(wrap);
+        });
+
+        // 날짜 컬럼 선택
+        distDateColEl.innerHTML = "";
+        (meta.datetime_cols || []).forEach((c) => {
+          const opt = document.createElement("option");
+          opt.value = c;
+          opt.textContent = c;
+          distDateColEl.appendChild(opt);
+        });
+        if (meta.datetime_cols?.length) distDateColEl.value = meta.datetime_cols[0];
+
+        // 날짜 컬럼이 바뀌면 최근 7일로 재설정
+        distDateColEl.addEventListener("change", () => applyQuickRange("7d"));
+        applyQuickRange("7d");
+
+        distSetStatus("");
+      } catch (err) {
+        distSetStatus(err.message || String(err), true);
+      }
+    }
+
+    function kdeEstimate(values, xs) {
+      const n = values.length;
+      if (n === 0) return xs.map(() => 0);
+      if (n === 1) return xs.map(() => 0);
+
+      let mean = 0;
+      for (const v of values) mean += v;
+      mean /= n;
+
+      let variance = 0;
+      for (const v of values) variance += (v - mean) * (v - mean);
+      variance /= Math.max(1, n - 1);
+
+      const std = Math.sqrt(variance);
+      let h = 1.06 * std * Math.pow(n, -0.2);
+      if (!isFinite(h) || h <= 0) h = std > 0 ? std : 1;
+
+      const invSqrt2Pi = 1 / Math.sqrt(2 * Math.PI);
+      const out = [];
+      for (const x of xs) {
+        let sum = 0;
+        const invH = 1 / h;
+        for (const v of values) {
+          const z = (x - v) * invH;
+          sum += Math.exp(-0.5 * z * z);
+        }
+        out.push(sum / (n * h) * invSqrt2Pi);
+      }
+      return out;
+    }
+
+    function histogram(values, binEdges) {
+      const counts = new Array(binEdges.length - 1).fill(0);
+      const min = binEdges[0];
+      const max = binEdges[binEdges.length - 1];
+      const nbins = binEdges.length - 1;
+      if (!values.length) return { centers: [], counts };
+
+      for (const v of values) {
+        if (v < min || v > max) continue;
+        let idx = Math.floor(((v - min) / (max - min)) * nbins);
+        if (idx === nbins) idx = nbins - 1;
+        counts[idx] += 1;
+      }
+
+      const centers = [];
+      for (let i = 0; i < nbins; i++) {
+        centers.push((binEdges[i] + binEdges[i + 1]) / 2);
+      }
+      return { centers, counts };
+    }
+
+    function renderDistributionPlot({ chartType, numericCol, groups }) {
+      const plotEl = document.getElementById("dist-plot");
+      if (!plotEl) return;
+
+      // 값 전부 기준 min/max
+      const allValues = [];
+      (groups || []).forEach((g) => {
+        if (Array.isArray(g.values)) allValues.push(...g.values);
+      });
+
+      if (!allValues.length) {
+        plotEl.innerHTML = "";
+        Plotly.newPlot(plotEl, [], { title: "표시할 값이 없습니다." });
+        return;
+      }
+
+      const vMin = Math.min(...allValues);
+      const vMax = Math.max(...allValues);
+
+      if (vMin === vMax) {
+        Plotly.newPlot(plotEl, [], { title: "값이 모두 동일합니다." });
+        return;
+      }
+
+      if (chartType === "kde") {
+        const xsN = 160;
+        const xs = [];
+        for (let i = 0; i < xsN; i++) {
+          xs.push(vMin + (i / (xsN - 1)) * (vMax - vMin));
+        }
+
+        const traces = [];
+        groups.forEach((g, idx) => {
+          const vals = g.values || [];
+          if (vals.length < 2) return;
+          const ys = kdeEstimate(vals, xs);
+          traces.push({
+            x: xs,
+            y: ys,
+            mode: "lines",
+            name: g.group,
+            line: { width: 2 },
+          });
+        });
+
+        Plotly.newPlot(plotEl, traces, {
+          title: `${numericCol} KDE (${groups.length} groups)`,
+          xaxis: { title: numericCol },
+          yaxis: { title: "Density" },
+          margin: { l: 60, r: 20, t: 40, b: 55 },
+          legend: { orientation: "h" },
+        });
+      } else {
+        const nbins = 30;
+        const binEdges = [];
+        for (let i = 0; i <= nbins; i++) {
+          binEdges.push(vMin + (i / nbins) * (vMax - vMin));
+        }
+
+        const traces = [];
+        groups.forEach((g) => {
+          const { centers, counts } = histogram(g.values || [], binEdges);
+          traces.push({
+            x: centers,
+            y: counts,
+            type: "bar",
+            name: g.group,
+            opacity: 0.75,
+          });
+        });
+
+        Plotly.newPlot(plotEl, traces, {
+          barmode: "group",
+          title: `${numericCol} Histogram (bar)`,
+          xaxis: { title: numericCol },
+          yaxis: { title: "Count" },
+          margin: { l: 60, r: 20, t: 40, b: 55 },
+        });
+      }
+    }
+  </script>
+</body>
+</html>
