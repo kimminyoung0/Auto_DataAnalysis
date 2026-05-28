@@ -12,6 +12,8 @@ export default defineConfig({
       '/query': 'http://127.0.0.1:8000',
       '/analyze': 'http://127.0.0.1:8000',
       '/distribution': 'http://127.0.0.1:8000',
+      '/api': 'http://127.0.0.1:8000',
+      '/quality': 'http://127.0.0.1:8000',
     },
   },
 })

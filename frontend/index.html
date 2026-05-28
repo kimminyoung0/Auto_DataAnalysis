@@ -17,6 +17,16 @@
       --bg: #f8fafc;
       --text: #0f172a;
       --muted: #64748b;
+      --green-dark: #047857;
+      --green-dark-hover: #065f46;
+      --green-muted: #b8cfc4;
+      --green-muted-hover: #a8c0b4;
+      --green-muted-text: #3d5c4a;
+      --green-muted-border: #94ad9f;
+      --target-soft: #fee2e2;
+      --target-border: #fecaca;
+      --tab-active: #8aad9c;
+      --tab-active-border: #6b9180;
     }
 
     * { box-sizing: border-box; }
@@ -30,9 +40,308 @@
     }
 
     .wrap {
-      max-width: 1200px;
-      margin: 0 auto;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .app-layout {
+      display: flex;
+      align-items: stretch;
+      min-height: calc(100vh - 4rem);
+    }
+
+    .project-sidebar {
+      width: 240px;
+      min-width: 240px;
+      flex-shrink: 0;
+      background: #fff;
+      border-right: 1px solid var(--border);
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: sticky;
+      top: 0;
+      align-self: flex-start;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .project-sidebar-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .project-sidebar-header h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .project-sidebar-header button {
+      width: 100%;
+      font-size: 0.85rem;
+      padding: 0.45rem 0.65rem;
+      background: var(--green-dark);
+    }
+
+    .project-sidebar-header button:hover {
+      background: var(--green-dark-hover);
+    }
+
+    .project-new-form {
+      display: none;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .project-new-form.visible {
+      display: flex;
+    }
+
+    .project-new-form input {
+      width: 100%;
+      padding: 0.45rem 0.55rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+
+    .project-new-form-actions {
+      display: flex;
+      gap: 0.35rem;
+    }
+
+    .project-new-form-actions button {
+      flex: 1;
+      font-size: 0.8rem;
+      padding: 0.4rem;
+    }
+
+    .project-list,
+    .analysis-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .project-list-item,
+    .analysis-list-item {
+      width: 100%;
+      text-align: left;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      padding: 0.45rem 0.55rem;
+      background: transparent;
+      color: var(--text);
+      font-size: 0.82rem;
+      line-height: 1.35;
+      cursor: pointer;
+    }
+
+    .project-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem;
+    }
+
+    .project-row-name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .kebab-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .project-list-item:hover .kebab-btn {
+      background: var(--green-dark);
+      color: #fff;
+      border-color: var(--green-dark);
+    }
+
+    .project-menu {
+      position: absolute;
+      right: 10px;
+      top: 36px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgb(15 23 42 / 10%);
+      padding: 0.35rem;
+      z-index: 10;
+      min-width: 160px;
+    }
+
+    .project-menu button {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 0.45rem 0.55rem;
+      border: 1px solid transparent;
+      font-size: 0.82rem;
+    }
+
+    .project-menu button:hover {
+      background: #f1f5f9;
+    }
+
+    .project-menu .danger:hover {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .project-list-item:hover,
+    .analysis-list-item:hover {
+      background: #f1f5f9;
+    }
+
+    .project-list-item.active,
+    .analysis-list-item.active {
+      background: var(--accent-soft);
+      border-color: #bfdbfe;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .analysis-list-item .analysis-meta {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 400;
+      margin-top: 0.15rem;
+    }
+
+    .analysis-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.35rem;
+    }
+
+    .analysis-row-main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .analysis-row-actions {
+      display: flex;
+      gap: 0.25rem;
+      flex-shrink: 0;
+      align-self: flex-end;
+      margin-top: 0.25rem;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+
+    .icon-btn.danger:hover {
+      background: #fee2e2;
+      border-color: #fecaca;
+      color: #b91c1c;
+    }
+
+    .analysis-section {
+      border-top: 1px solid var(--border);
+      padding-top: 0.65rem;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .analysis-section h3 {
+      margin: 0 0 0.45rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .analysis-list-scroll {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 120px;
+    }
+
+    .project-sidebar-empty {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .main-content {
+      flex: 1;
+      min-width: 0;
       padding: 2rem 1.25rem 3rem;
+    }
+
+    @media (max-width: 960px) {
+      .app-layout {
+        flex-direction: column;
+      }
+
+      .project-sidebar {
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .data-top-row {
+        flex-wrap: wrap;
+      }
+
+      .data-date-toolbar-row {
+        flex-wrap: wrap;
+        overflow-x: visible;
+      }
     }
 
     h1 { margin: 0 0 0.5rem; font-size: 1.75rem; }
@@ -62,8 +371,92 @@
       background: #059669;
     }
 
+    .statistics-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .statistics-toolbar .analyze-btn {
+      width: auto;
+      margin-top: 0;
+      flex-shrink: 0;
+    }
+
+    .statistics-toolbar-hint {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
     .status { margin-top: 0.75rem; font-size: 0.9rem; color: var(--muted); }
     .status.error { color: #dc2626; }
+
+    .upload-progress {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0.75rem;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .upload-progress.visible {
+      display: flex;
+    }
+
+    .upload-progress-name {
+      font-size: 0.85rem;
+      color: var(--text);
+      min-width: 180px;
+      max-width: 360px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .upload-progress-bar {
+      flex: 1;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .upload-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green-dark);
+      border-radius: 999px;
+      transition: width 0.15s ease;
+    }
+
+    .upload-progress-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .upload-progress-close:hover {
+      background: #f1f5f9;
+      color: var(--text);
+      border-color: var(--border);
+    }
 
     #app-section { display: none; margin-top: 1.5rem; }
     #app-section.visible { display: block; }
@@ -86,12 +479,23 @@
     }
 
     .tab-btn.active {
-      background: #fff;
-      color: var(--accent);
-      box-shadow: 0 -1px 0 var(--border) inset;
-      border: 1px solid var(--border);
-      border-bottom-color: #fff;
+      background: var(--tab-active);
+      color: #fff;
+      box-shadow: none;
+      border: 1px solid var(--tab-active-border);
+      border-bottom-color: var(--tab-active);
       margin-bottom: -2px;
+    }
+
+    .target-col-header,
+    .target-col-cell {
+      background: var(--target-soft) !important;
+    }
+
+    .target-var {
+      background: var(--target-soft);
+      border-radius: 6px;
+      padding: 0.05rem 0.25rem;
     }
 
     .tab-panel { display: none; }
@@ -109,6 +513,10 @@
       margin-bottom: 1rem;
     }
 
+    .upload-box.hidden {
+      display: none;
+    }
+
     .file-input-hidden {
       position: absolute;
       width: 0;
@@ -118,8 +526,27 @@
       pointer-events: none;
     }
 
-    .upload-trigger-btn {
+    .upload-trigger-btn,
+    .btn-green-dark {
       min-width: 140px;
+      background: var(--green-dark);
+      color: #fff;
+      border: none;
+    }
+
+    .upload-trigger-btn:hover:not(:disabled),
+    .btn-green-dark:hover:not(:disabled) {
+      background: var(--green-dark-hover);
+    }
+
+    .btn-green-muted {
+      background: var(--green-muted);
+      color: var(--green-muted-text);
+      border: 1px solid var(--green-muted-border);
+    }
+
+    .btn-green-muted:hover:not(:disabled) {
+      background: var(--green-muted-hover);
     }
 
     .meta {
@@ -128,45 +555,292 @@
       margin-bottom: 0.75rem;
     }
 
-    .preview-layout {
+    .data-content-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .data-top-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: nowrap;
+    }
+
+    .data-top-row .upload-trigger-btn {
+      min-width: 140px;
+      height: 44px;
+      align-self: center;
+    }
+
+    .data-display-row {
       display: flex;
       gap: 1rem;
-      align-items: flex-start;
-      flex-wrap: wrap;
+      align-items: stretch;
+      flex-wrap: nowrap;
     }
-
-
-    .filter-panel {
-      width: min(100%, 320px);
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1rem;
-      box-shadow: 0 1px 3px rgb(15 23 42 / 6%);
-    }
-
-    .filter-panel h2 { margin: 0 0 0.35rem; font-size: 1rem; }
-    .filter-panel p { margin: 0 0 0.75rem; font-size: 0.8rem; color: var(--muted); }
-    .filter-panel label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.35rem; }
-
-    .filter-panel input[type="text"] {
-      width: 100%;
-      padding: 0.5rem 0.6rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-family: Consolas, "Courier New", monospace;
-      font-size: 0.85rem;
-    }
-
-    .filter-actions { display: flex; gap: 0.5rem; margin-top: 0.65rem; flex-wrap: wrap; }
-    .filter-actions button { flex: 1; min-width: 80px; }
-
-    .expr-active { margin-top: 0.65rem; font-size: 0.8rem; color: var(--muted); word-break: break-all; }
-    .expr-active code { font-family: Consolas, monospace; color: var(--accent); }
 
     .table-area {
       flex: 1;
-      min-width: min(100%, calc(var(--visible-cols) * var(--col-w) + 2px));
+      min-width: 0;
+    }
+
+    .data-date-toolbar {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      box-shadow: 0 1px 3px rgb(15 23 42 / 6%);
+      width: 100%;
+      max-width: none;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .data-date-toolbar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.65rem;
+    }
+
+    .data-date-toolbar-header h2 {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .data-date-toggle {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .data-date-toggle:hover {
+      background: #f1f5f9;
+      color: var(--text);
+    }
+
+    .data-date-toolbar.collapsed {
+      padding-bottom: 0.65rem;
+    }
+
+    .data-date-toolbar.collapsed #data-date-section,
+    .data-date-toolbar.collapsed #data-date-empty {
+      display: none !important;
+    }
+
+    .data-date-toolbar-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.65rem 1rem;
+      align-items: flex-end;
+      overflow-x: auto;
+      padding-bottom: 0.15rem;
+    }
+
+    .data-date-toolbar .field-inline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      min-width: 0;
+    }
+
+    .data-date-toolbar .field-inline label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .data-date-toolbar select,
+    .data-date-toolbar input[type="date"] {
+      width: auto;
+      min-width: 140px;
+      padding: 0.45rem 0.55rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      background: #fff;
+    }
+
+    .data-date-toolbar .quick-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0;
+    }
+
+    .data-date-toolbar .quick-buttons button {
+      padding: 0.45rem 0.65rem;
+      font-size: 0.8rem;
+    }
+
+    .data-date-toolbar-actions {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .data-date-toolbar-actions button {
+      white-space: nowrap;
+    }
+
+
+    .pandas-sidebar {
+      width: 300px;
+      min-width: 280px;
+      flex-shrink: 0;
+      align-self: flex-start;
+      display: flex;
+      flex-direction: column;
+      height: calc((var(--header-h) + var(--visible-rows) * var(--row-h) + 2px) / 2);
+      max-height: calc((var(--header-h) + var(--visible-rows) * var(--row-h) + 2px) / 2);
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem;
+      box-shadow: 0 1px 3px rgb(15 23 42 / 6%);
+    }
+
+    .pandas-examples {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      margin-bottom: 0.5rem;
+      padding-right: 0.15rem;
+    }
+
+    .pandas-examples-lead {
+      margin: 0 0 0.5rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .pandas-example-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .pandas-example-list li {
+      margin: 0.3rem 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .pandas-example-list code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.76rem;
+      color: #94a3b8;
+      cursor: pointer;
+      word-break: break-all;
+    }
+
+    .pandas-example-list code:hover {
+      color: var(--green-dark);
+      text-decoration: underline;
+    }
+
+    .expr-active {
+      font-size: 0.75rem;
+      color: var(--muted);
+      word-break: break-all;
+      margin: 0 0 0.5rem;
+      padding: 0.4rem 0.55rem;
+      background: var(--accent-soft);
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    .expr-active code {
+      font-family: Consolas, "Courier New", monospace;
+      color: var(--accent);
+    }
+
+    .pandas-chat-box {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.45rem 0.35rem 1rem;
+      background: #f8fafc;
+      box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .pandas-chat-box:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+      background: #fff;
+    }
+
+    .pandas-chat-box input {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.9rem;
+      padding: 0.35rem 0;
+    }
+
+    .pandas-chat-send {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pandas-chat-send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .pandas-sidebar-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-top: 0.45rem;
+      flex-shrink: 0;
+    }
+
+    .pandas-sidebar-footer button {
+      width: 100%;
+    }
+
+    @media (max-width: 960px) {
+      .data-display-row {
+        flex-wrap: wrap;
+      }
+
+      .pandas-sidebar {
+        width: 100%;
+        min-height: auto;
+      }
     }
 
     .table-viewport.data-preview-box {
@@ -289,6 +963,114 @@
     .var-list li { margin: 0.2rem 0; font-family: Consolas, monospace; font-size: 0.9rem; }
     .var-list.empty { list-style: none; padding-left: 0; color: var(--muted); }
 
+    .stats-var-columns,
+    .stats-describe-columns {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stats-var-col h4,
+    .stats-describe-col-title {
+      margin: 0 0 0.45rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .stats-var-scroll {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.45rem 0.6rem;
+      background: #f8fafc;
+    }
+
+    .stats-var-scroll .var-list {
+      margin: 0;
+      padding-left: 1rem;
+    }
+
+    .stats-var-scroll .var-list li {
+      font-size: 0.78rem;
+      margin: 0.12rem 0;
+    }
+
+    .stats-describe-section {
+      margin-top: 1.25rem;
+    }
+
+    .stats-describe-section > h3 {
+      margin: 0 0 0.65rem;
+      font-size: 1.05rem;
+    }
+
+    .stats-describe-scroll {
+      max-height: 42rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.45rem;
+      background: #f8fafc;
+    }
+
+    .stats-describe-empty {
+      margin: 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .describe-mini-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.4rem 0.5rem;
+      margin-bottom: 0.4rem;
+      box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+    }
+
+    .describe-mini-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .describe-mini-card h4 {
+      margin: 0 0 0.3rem;
+      font-size: 0.76rem;
+      font-weight: 600;
+      font-family: Consolas, "Courier New", monospace;
+      color: var(--accent);
+      word-break: break-all;
+    }
+
+    table.stats-table-compact {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table.stats-table-compact th,
+    table.stats-table-compact td {
+      padding: 0.15rem 0.35rem;
+      border: 1px solid #e2e8f0;
+      font-size: 0.68rem;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    table.stats-table-compact thead th {
+      background: #f1f5f9;
+      font-weight: 600;
+    }
+
+    @media (max-width: 960px) {
+      .stats-var-columns,
+      .stats-describe-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .placeholder {
       text-align: center;
       padding: 3rem 1rem;
@@ -365,20 +1147,85 @@
       border-radius: 12px;
       overflow: hidden;
     }
+
+    .dist-grid {
+      margin-top: 1rem;
+      width: 100%;
+      display: grid;
+      gap: 12px;
+    }
+
+    .dist-cell {
+      width: 100%;
+      min-height: 360px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .radio-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .radio-item {
+      display: inline-flex;
+      gap: 0.4rem;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.6rem;
+      background: #fff;
+      font-size: 0.85rem;
+      user-select: none;
+      cursor: pointer;
+    }
   </style>
   <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 </head>
 <body>
   <div class="wrap">
+    <div class="app-layout">
+      <aside class="project-sidebar" id="project-sidebar">
+        <div class="project-sidebar-header">
+          <h2>프로젝트</h2>
+          <button type="button" id="new-project-btn">+ 새 프로젝트</button>
+          <div class="project-new-form" id="project-new-form">
+            <input type="text" id="project-name-input" placeholder="프로젝트 이름" maxlength="200" />
+            <div class="project-new-form-actions">
+              <button type="button" class="secondary" id="cancel-project-btn">취소</button>
+              <button type="button" id="create-project-btn">생성</button>
+            </div>
+          </div>
+        </div>
+        <ul class="project-list" id="project-list"></ul>
+        <p class="project-sidebar-empty" id="project-empty-hint">프로젝트를 생성한 뒤 파일을 업로드하세요.</p>
+        <div class="analysis-section" id="analysis-section" hidden>
+          <h3 id="analysis-section-title">분석 기록</h3>
+          <div class="analysis-list-scroll">
+            <ul class="analysis-list" id="analysis-list"></ul>
+          </div>
+        </div>
+      </aside>
+
+      <div class="main-content">
     <h1>Auto Data Analysis</h1>
-    <p class="lead">데이터 업로드 · pandas 필터 · 자동분석을 탭으로 나눠 사용합니다.</p>
+    <div class="upload-progress" id="upload-progress" aria-live="polite">
+      <span class="upload-progress-name" id="upload-progress-name"></span>
+      <div class="upload-progress-bar" aria-hidden="true">
+        <div class="upload-progress-fill" id="upload-progress-fill"></div>
+      </div>
+      <button type="button" class="upload-progress-close" id="upload-progress-close" title="닫기" aria-label="닫기">×</button>
+    </div>
     <p class="status" id="status"></p>
 
     <section id="app-section" class="visible">
       <nav class="tabs" role="tablist">
         <button type="button" class="tab-btn active" data-tab="data">Data</button>
         <button type="button" class="tab-btn" data-tab="statistics">Statistics</button>
-        <button type="button" class="tab-btn" data-tab="numeric">Numeric</button>
+        <button type="button" class="tab-btn" data-tab="numeric">Null/0</button>
         <button type="button" class="tab-btn" data-tab="categorical">Categorical</button>
         <button type="button" class="tab-btn" data-tab="distribution">Distribution</button>
         <button type="button" class="tab-btn" data-tab="analysis">Analysis</button>
@@ -386,51 +1233,216 @@
 
       <!-- Data 탭 -->
       <div id="tab-data" class="tab-panel active" role="tabpanel">
-        <div class="upload-box">
+        <div class="upload-box hidden">
           <input type="file" id="file-input" class="file-input-hidden" accept=".csv,.xlsx,.xls" />
-          <button type="button" id="upload-trigger-btn" class="upload-trigger-btn">파일 업로드</button>
         </div>
         <div class="meta" id="meta"></div>
 
-        <div class="preview-layout">
-          <div class="table-area">
-            <div class="table-viewport data-preview-box" id="viewport">
-              <p class="data-empty-msg" id="data-empty-msg"></p>
-              <table class="data-table">
-                <thead id="table-head"></thead>
-                <tbody id="table-body"></tbody>
-              </table>
+        <div class="data-content-wrap">
+          <div class="data-top-row">
+            <button type="button" id="upload-trigger-btn" class="upload-trigger-btn">파일 업로드</button>
+
+            <div class="data-date-toolbar" id="data-date-toolbar">
+              <div class="data-date-toolbar-header">
+                <h2>날짜 필터</h2>
+                <button type="button" class="data-date-toggle" id="data-date-toggle" aria-label="날짜 필터 접기/펼치기" title="접기/펼치기">▴</button>
+              </div>
+              <div id="data-date-section">
+                <div class="data-date-toolbar-row">
+                  <div class="field-inline">
+                    <label for="target-col">타겟 변수</label>
+                    <select id="target-col"></select>
+                  </div>
+                  <div class="field-inline">
+                    <label for="data-date-col">날짜 컬럼</label>
+                    <select id="data-date-col"></select>
+                  </div>
+                  <div class="field-inline">
+                    <label for="data-start-date">시작일</label>
+                    <input type="date" id="data-start-date" />
+                  </div>
+                  <div class="field-inline">
+                    <label for="data-end-date">끝일</label>
+                    <input type="date" id="data-end-date" />
+                  </div>
+                  <div class="field-inline">
+                    <label>빠른 선택</label>
+                    <div class="quick-buttons" id="data-quick-buttons">
+                      <button type="button" class="secondary" data-range="7d">최근 7일</button>
+                      <button type="button" class="secondary" data-range="1m">최근 1개월</button>
+                      <button type="button" class="secondary" data-range="3m">최근 3개월</button>
+                      <button type="button" class="secondary" data-range="6m">최근 6개월</button>
+                    </div>
+                  </div>
+                  <div class="field-inline data-date-toolbar-actions">
+                    <label aria-hidden="true">&nbsp;</label>
+                    <div style="display:flex; gap:0.4rem;">
+                      <button type="button" class="btn-green-dark" id="apply-date-btn">날짜 적용</button>
+                      <button type="button" class="btn-green-muted" id="clear-date-btn">필터 해제</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p id="data-date-empty" class="panel-hint" style="display:none; margin:0.5rem 0 0;">
+                날짜/시간 컬럼이 없습니다.
+              </p>
             </div>
           </div>
 
-          <aside class="filter-panel">
-            <h2>pandas 필터</h2>
-            <p>업로드 데이터 = <strong>df</strong> · <strong>pd</strong> · <strong>np</strong></p>
-            <label for="pandas-expr">표현식</label>
-            <input type="text" id="pandas-expr" value="df" placeholder="df.head(10)" spellcheck="false" />
-            <div class="filter-actions">
-              <button type="button" id="apply-expr-btn">적용</button>
-              <button type="button" class="secondary" id="reset-expr-btn">전체 (df)</button>
+          <div class="data-display-row">
+            <div class="table-area">
+              <div class="table-viewport data-preview-box" id="viewport">
+                <p class="data-empty-msg" id="data-empty-msg"></p>
+                <table class="data-table">
+                  <thead id="table-head"></thead>
+                  <tbody id="table-body"></tbody>
+                </table>
+              </div>
             </div>
-            <button type="button" class="analyze-btn" id="auto-analyze-btn">자동분석</button>
-            <p class="expr-active">적용 중: <code id="active-expr">df</code></p>
-          </aside>
+
+            <aside class="pandas-sidebar">
+              <div class="pandas-examples">
+                <p class="pandas-examples-lead">
+                  데이터는 <strong>df</strong> · 예시를 클릭하면 입력창에 넣을 수 있습니다.
+                </p>
+                <ul class="pandas-example-list">
+                  <li><code class="pandas-example-code" data-expr="df">df</code> — 전체 데이터</li>
+                  <li><code class="pandas-example-code" data-expr="df.head(10)">df.head(10)</code> — 앞 10행만</li>
+                  <li><code class="pandas-example-code" data-expr="df.tail(20)">df.tail(20)</code> — 뒤 20행만</li>
+                  <li><code class="pandas-example-code" data-expr="df.iloc[0:100]">df.iloc[0:100]</code> — 0~99행 (슬라이스)</li>
+                  <li><code class="pandas-example-code" data-expr="df.iloc[[0, 10, 20]]">df.iloc[[0, 10, 20]]</code> — 특정 행만</li>
+                  <li><code class="pandas-example-code" data-expr="df[['열이름1', '열이름2']]">df[['열이름1', '열이름2']]</code> — 특정 열만</li>
+                  <li><code class="pandas-example-code" data-expr="df[df['열이름'] == '값']">df[df['열이름'] == '값']</code> — 조건으로 행 필터</li>
+                  <li><code class="pandas-example-code" data-expr="df.query('열이름 > 0')">df.query('열이름 &gt; 0')</code> — query로 필터</li>
+                  <li><code class="pandas-example-code" data-expr="df.sort_values('열이름')">df.sort_values('열이름')</code> — 열 기준 정렬</li>
+                  <li><code class="pandas-example-code" data-expr="df.groupby('MCCODE').head(3)">df.groupby('MCCODE').head(3)</code> — 그룹별 앞 3행</li>
+                </ul>
+              </div>
+
+              <p class="expr-active">적용: <code id="active-expr">df</code></p>
+
+              <div class="pandas-chat-box">
+                <input
+                  type="text"
+                  id="pandas-expr"
+                  value="df"
+                  placeholder="표현식 입력 후 ↑"
+                  spellcheck="false"
+                  autocomplete="off"
+                />
+                <button type="button" class="pandas-chat-send" id="apply-expr-btn" title="적용" aria-label="적용">
+                  ↑
+                </button>
+              </div>
+
+              <div class="pandas-sidebar-footer">
+                <button type="button" class="secondary" id="reset-expr-btn">전체 (df)</button>
+              </div>
+            </aside>
+          </div>
         </div>
       </div>
 
       <!-- Statistics 탭 -->
       <div id="tab-statistics" class="tab-panel" role="tabpanel">
-        <div id="statistics-content" class="placeholder">Data 탭에서 자동분석을 실행하세요.</div>
+        <div class="statistics-toolbar">
+          <button type="button" class="analyze-btn" id="auto-analyze-btn">자동분석</button>
+          <span class="statistics-toolbar-hint">업로드한 데이터의 변수 유형·기술통계를 생성합니다.</span>
+        </div>
+        <div id="statistics-content" class="placeholder">위 「자동분석」 버튼을 눌러 실행하세요.</div>
       </div>
 
       <!-- Numeric 탭 -->
       <div id="tab-numeric" class="tab-panel" role="tabpanel">
-        <div id="numeric-content" class="placeholder">자동분석 후 수치형 변수 요약이 표시됩니다.</div>
+        <div class="card">
+          <h3>데이터 품질 (결측/0값)</h3>
+          <p style="margin-top:0; color: var(--muted); font-size:0.85rem;">
+            수치형 컬럼의 결측(NaN)과 0값 비율을 확인합니다. 범주형 컬럼으로 그룹바이하여 비교할 수도 있습니다.
+          </p>
+
+          <div class="field" style="max-width: 560px;">
+            <label>그룹바이 컬럼(선택)</label>
+            <div id="quality-group-cols" class="checkbox-list"></div>
+            <p style="margin:0.35rem 0 0; color: var(--muted); font-size:0.8rem;">
+              최대 4개까지 선택 가능 · 기본 2개 선택
+            </p>
+          </div>
+
+          <div class="field">
+            <label>그룹 값(선택)</label>
+            <div style="display:flex; gap:0.35rem; flex-wrap:wrap; margin-bottom:0.35rem;">
+              <button type="button" class="secondary" id="quality-select-all-btn">전체 선택</button>
+              <button type="button" class="secondary" id="quality-clear-btn">선택 해제</button>
+            </div>
+            <div id="quality-group-values" class="checkbox-list" style="max-height: 220px; overflow:auto;"></div>
+            <p style="margin:0.35rem 0 0; color: var(--muted); font-size:0.8rem;">
+              비워두면 전체 그룹으로 분석합니다. (그룹 값 목록은 분석 후 자동 생성됩니다.)
+            </p>
+          </div>
+
+          <div class="field">
+            <label>표시 항목</label>
+            <div class="radio-row" style="margin-top:0.35rem;">
+              <label class="radio-item">
+                <input type="radio" name="quality-metric" value="missing_rate" checked />
+                <span>결측 비율</span>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="quality-metric" value="zero_rate" />
+                <span>0값 비율</span>
+              </label>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:center; margin-top:0.75rem;">
+            <button type="button" class="analyze-btn" id="quality-run-btn" style="width:auto; padding:0.55rem 1.2rem;">
+              분석
+            </button>
+          </div>
+          <p class="status" id="quality-status" style="margin-top:0.6rem;"></p>
+        </div>
+
+        <div class="card">
+          <h3>히트맵</h3>
+          <div id="quality-heatmap" class="dist-plot"></div>
+        </div>
+
+        <div class="card">
+          <h3>상세 표</h3>
+          <div id="quality-table"></div>
+        </div>
       </div>
 
       <!-- Categorical 탭 -->
       <div id="tab-categorical" class="tab-panel" role="tabpanel">
-        <div id="categorical-content" class="placeholder">자동분석 후 범주형 변수 요약이 표시됩니다.</div>
+        <div class="card">
+          <h3>범주형 포함관계(그룹 카운트)</h3>
+          <p style="margin-top:0; color: var(--muted); font-size:0.85rem;">
+            범주형 컬럼을 1~10개 선택해 그룹바이 카운트를 만들고, 빈도표(count)로 포함관계를 확인합니다.
+          </p>
+
+          <div class="field">
+            <label>그룹바이 컬럼(최대 10개 · 기본 1개)</label>
+            <div id="cat-group-cols" class="checkbox-list"></div>
+          </div>
+
+          <div style="display:flex; justify-content:center; margin-top:0.75rem;">
+            <button type="button" class="analyze-btn" id="cat-run-btn" style="width:auto; padding:0.55rem 1.2rem;">
+              분석
+            </button>
+          </div>
+          <p class="status" id="cat-status" style="margin-top:0.6rem;"></p>
+        </div>
+
+        <div class="card">
+          <h3>막대 그래프</h3>
+          <div id="cat-bar" class="dist-plot"></div>
+        </div>
+
+        <div class="card">
+          <h3>상세 표</h3>
+          <div id="cat-table"></div>
+        </div>
       </div>
 
       <!-- Distribution 탭 -->
@@ -458,11 +1470,25 @@
               </div>
 
               <div class="field">
-                <label for="dist-max-groups">최대 그룹 수</label>
-                <select id="dist-max-groups">
+                <label>표현 방식</label>
+                <div class="radio-row">
+                  <label class="radio-item">
+                    <input type="radio" name="dist-mode" value="combined" checked />
+                    <span>한 그래프에 모으기</span>
+                  </label>
+                  <label class="radio-item">
+                    <input type="radio" name="dist-mode" value="separate" />
+                    <span>금형별로 각각</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="field" id="dist-per-row-field">
+                <label for="dist-per-row">row당 그래프 수</label>
+                <select id="dist-per-row">
+                  <option value="2" selected>2</option>
                   <option value="3">3</option>
-                  <option value="5" selected>5</option>
-                  <option value="10">10</option>
+                  <option value="4">4</option>
                 </select>
               </div>
 
@@ -518,6 +1544,8 @@
         <div class="placeholder">Analysis 탭 — 심화 분석 기능 준비 중입니다.</div>
       </div>
     </section>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -535,11 +1563,25 @@
     const resetExprBtn = document.getElementById("reset-expr-btn");
     const autoAnalyzeBtn = document.getElementById("auto-analyze-btn");
     const activeExprEl = document.getElementById("active-expr");
+    const targetColEl = document.getElementById("target-col");
 
     let tableData = { columns: [], rows: [] };
     let sessionId = null;
     let currentFilename = "";
     let analysisData = null;
+    let currentProjectId = null;
+    let currentAnalysisId = null;
+    let projectsCache = [];
+    let targetCol = null;
+
+    const projectListEl = document.getElementById("project-list");
+    const projectEmptyHintEl = document.getElementById("project-empty-hint");
+    const analysisSectionEl = document.getElementById("analysis-section");
+    const analysisSectionTitleEl = document.getElementById("analysis-section-title");
+    const analysisListEl = document.getElementById("analysis-list");
+    const projectNewFormEl = document.getElementById("project-new-form");
+    const projectNameInputEl = document.getElementById("project-name-input");
+    const LAST_PROJECT_KEY = "ada_last_project_id";
 
     const ROW_H = 32;
     const VIRTUAL_BUFFER = 8;
@@ -549,6 +1591,517 @@
       statusEl.textContent = msg;
       statusEl.classList.toggle("error", isError);
     }
+
+    const uploadProgressEl = document.getElementById("upload-progress");
+    const uploadProgressNameEl = document.getElementById("upload-progress-name");
+    const uploadProgressCloseEl = document.getElementById("upload-progress-close");
+    const uploadProgressFillEl = document.getElementById("upload-progress-fill");
+    let uploadProgressForcedHidden = false;
+
+    function showUploadProgress(filename) {
+      if (!uploadProgressEl || uploadProgressForcedHidden) return;
+      if (uploadProgressNameEl) uploadProgressNameEl.textContent = filename ? String(filename) : "업로드 중…";
+      if (uploadProgressFillEl) uploadProgressFillEl.style.width = "0%";
+      uploadProgressEl.classList.add("visible");
+    }
+
+    function setUploadProgress(pct) {
+      if (!uploadProgressFillEl) return;
+      const v = Math.max(0, Math.min(100, Number(pct) || 0));
+      uploadProgressFillEl.style.width = `${v}%`;
+    }
+
+    function setUploadProgressCapped(pct, cap = 95) {
+      const v = Math.max(0, Math.min(cap, Number(pct) || 0));
+      setUploadProgress(v);
+    }
+
+    function hideUploadProgress() {
+      if (!uploadProgressEl) return;
+      uploadProgressEl.classList.remove("visible");
+    }
+
+    uploadProgressCloseEl?.addEventListener("click", () => {
+      uploadProgressForcedHidden = true;
+      hideUploadProgress();
+    });
+
+    function resetAnalysisTabsPlaceholder() {
+      const stats = document.getElementById("statistics-content");
+      if (stats) {
+        stats.innerHTML = "위 「자동분석」 버튼을 눌러 실행하세요.";
+        stats.className = "placeholder";
+      }
+    }
+
+    function formatSavedAt(iso) {
+      if (!iso) return "";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) {
+        return String(iso).slice(0, 16).replace("T", " ");
+      }
+      return d.toLocaleString("ko-KR", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+    }
+
+    function highlightActiveProjectAndAnalysis() {
+      projectListEl.querySelectorAll(".project-list-item").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.projectId === currentProjectId);
+      });
+      analysisListEl.querySelectorAll(".analysis-list-item").forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.analysisId === currentAnalysisId);
+      });
+    }
+
+    function renderProjectList() {
+      projectListEl.innerHTML = "";
+      if (!projectsCache.length) {
+        projectEmptyHintEl.hidden = false;
+        analysisSectionEl.hidden = true;
+        return;
+      }
+      projectEmptyHintEl.hidden = true;
+
+      projectsCache.forEach((project) => {
+        const li = document.createElement("li");
+        li.style.position = "relative";
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "project-list-item";
+        btn.dataset.projectId = project.id;
+        btn.title = `${project.analysis_count || 0}개 분석`;
+
+        const row = document.createElement("div");
+        row.className = "project-row";
+        const name = document.createElement("span");
+        name.className = "project-row-name";
+        name.textContent = project.name;
+        row.appendChild(name);
+
+        const kebab = document.createElement("button");
+        kebab.type = "button";
+        kebab.className = "kebab-btn";
+        kebab.title = "프로젝트 메뉴";
+        kebab.textContent = "⋯";
+        kebab.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleProjectMenu(project.id, project.name, li);
+        });
+        row.appendChild(kebab);
+        btn.appendChild(row);
+
+        btn.addEventListener("click", () => selectProject(project.id));
+        li.appendChild(btn);
+        projectListEl.appendChild(li);
+      });
+      highlightActiveProjectAndAnalysis();
+    }
+
+    function renderAnalysisList(analyses, projectName) {
+      analysisListEl.innerHTML = "";
+      analysisSectionTitleEl.textContent = projectName ? `${projectName} · 분석 기록` : "분석 기록";
+      analysisSectionEl.hidden = false;
+
+      if (!analyses.length) {
+        const li = document.createElement("li");
+        const p = document.createElement("p");
+        p.className = "project-sidebar-empty";
+        p.textContent = "아직 저장된 분석이 없습니다. 파일을 업로드하세요.";
+        li.appendChild(p);
+        analysisListEl.appendChild(li);
+        return;
+      }
+
+      analyses.forEach((item) => {
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "analysis-list-item";
+        btn.dataset.analysisId = item.id;
+
+        const row = document.createElement("div");
+        row.className = "analysis-row";
+        const main = document.createElement("div");
+        main.className = "analysis-row-main";
+        const title = document.createElement("span");
+        title.textContent = item.title || item.filename || "분석";
+        main.appendChild(title);
+        const meta = document.createElement("span");
+        meta.className = "analysis-meta";
+        const shapeText = item.shape
+          ? `${item.shape.rows}행 · ${formatSavedAt(item.created_at)}`
+          : formatSavedAt(item.created_at);
+        meta.textContent = item.has_report ? `${shapeText} · 분석완료` : shapeText;
+        main.appendChild(meta);
+
+        const actions = document.createElement("div");
+        actions.className = "analysis-row-actions";
+
+        const renameBtn = document.createElement("button");
+        renameBtn.type = "button";
+        renameBtn.className = "icon-btn";
+        renameBtn.title = "이름 수정";
+        renameBtn.textContent = "✎";
+        renameBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          await renameAnalysisItem(item.id, item.title || item.filename || "분석");
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "icon-btn danger";
+        delBtn.title = "삭제";
+        delBtn.textContent = "🗑";
+        delBtn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          await deleteAnalysisItem(item.id, item.title || item.filename || "분석");
+        });
+
+        actions.appendChild(renameBtn);
+        actions.appendChild(delBtn);
+
+        row.appendChild(main);
+        row.appendChild(actions);
+        btn.appendChild(row);
+
+        btn.addEventListener("click", () => loadSavedAnalysis(item.id));
+        li.appendChild(btn);
+        analysisListEl.appendChild(li);
+      });
+      highlightActiveProjectAndAnalysis();
+    }
+
+    // project kebab menu
+    let openProjectMenuEl = null;
+    function closeProjectMenu() {
+      if (openProjectMenuEl) {
+        openProjectMenuEl.remove();
+        openProjectMenuEl = null;
+      }
+    }
+    document.addEventListener("click", () => closeProjectMenu());
+
+    async function renameProjectItem(projectId, currentName) {
+      const next = prompt("프로젝트 이름 수정", currentName || "");
+      if (next === null) return;
+      const name = String(next).trim();
+      if (!name) {
+        setStatus("프로젝트 이름이 비어있습니다.", true);
+        return;
+      }
+      try {
+        const res = await fetch(`/api/projects/${projectId}/rename`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "프로젝트 이름 수정 실패");
+        await refreshProjects(projectId);
+        setStatus("프로젝트 이름을 수정했습니다.");
+      } catch (err) {
+        setStatus(err.message, true);
+      }
+    }
+
+    async function deleteProjectItem(projectId, projectName) {
+      const ok = confirm(`프로젝트를 삭제할까요?\n- ${projectName}\n(프로젝트 내 분석 기록도 모두 삭제되며 복구할 수 없습니다.)`);
+      if (!ok) return;
+      try {
+        if (currentProjectId === projectId) {
+          await saveCurrentAnalysisState();
+        }
+        const res = await fetch(`/api/projects/${projectId}`, { method: "DELETE" });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "프로젝트 삭제 실패");
+
+        if (currentProjectId === projectId) {
+          currentProjectId = null;
+          currentAnalysisId = null;
+          sessionId = null;
+          analysisData = null;
+          clearTable();
+          resetAnalysisTabsPlaceholder();
+          analysisListEl.innerHTML = "";
+          analysisSectionEl.hidden = true;
+        }
+        await refreshProjects();
+        setStatus("프로젝트를 삭제했습니다.");
+      } catch (err) {
+        setStatus(err.message, true);
+      }
+    }
+
+    function toggleProjectMenu(projectId, projectName, containerEl) {
+      if (!containerEl) return;
+      if (openProjectMenuEl) {
+        // 같은 위치 재클릭이면 닫기
+        closeProjectMenu();
+        return;
+      }
+      const menu = document.createElement("div");
+      menu.className = "project-menu";
+      menu.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+
+      const renameBtn = document.createElement("button");
+      renameBtn.type = "button";
+      renameBtn.textContent = "프로젝트 명 수정";
+      renameBtn.addEventListener("click", async () => {
+        closeProjectMenu();
+        await renameProjectItem(projectId, projectName);
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "danger";
+      delBtn.textContent = "프로젝트 제거";
+      delBtn.addEventListener("click", async () => {
+        closeProjectMenu();
+        await deleteProjectItem(projectId, projectName);
+      });
+
+      menu.appendChild(renameBtn);
+      menu.appendChild(delBtn);
+      containerEl.appendChild(menu);
+      openProjectMenuEl = menu;
+    }
+
+    async function refreshProjects(selectId = null) {
+      const res = await fetch("/api/projects");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "프로젝트 목록을 불러오지 못했습니다.");
+      projectsCache = data.projects || [];
+      renderProjectList();
+
+      const targetId =
+        selectId ||
+        currentProjectId ||
+        localStorage.getItem(LAST_PROJECT_KEY) ||
+        (projectsCache[0] && projectsCache[0].id);
+
+      if (targetId && projectsCache.some((p) => p.id === targetId)) {
+        await selectProject(targetId, { skipSave: true });
+      }
+    }
+
+    async function loadProjectAnalyses(projectId) {
+      const res = await fetch(`/api/projects/${projectId}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "프로젝트 정보를 불러오지 못했습니다.");
+      renderAnalysisList(data.analyses || [], data.project?.name);
+      return data;
+    }
+
+    async function saveCurrentAnalysisState() {
+      if (!currentProjectId || !currentAnalysisId || !sessionId) return;
+      try {
+        await fetch(
+          `/api/projects/${currentProjectId}/analyses/${currentAnalysisId}/state`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              expression: pandasExprInput.value.trim() || "df",
+              target_col: targetCol || null,
+              date_col: dataDateColEl?.value || null,
+              date_start: dataStartDateEl?.value || null,
+              date_end: dataEndDateEl?.value || null,
+              date_filter_active: dataDateFilterActive,
+            }),
+          }
+        );
+      } catch (_) {
+        /* 저장 실패는 무시 — 다음 전환 시 재시도 가능 */
+      }
+    }
+
+    async function selectProject(projectId, options = {}) {
+      if (!options.skipSave) {
+        await saveCurrentAnalysisState();
+      }
+      currentProjectId = projectId;
+      localStorage.setItem(LAST_PROJECT_KEY, projectId);
+      highlightActiveProjectAndAnalysis();
+      try {
+        await loadProjectAnalyses(projectId);
+      } catch (err) {
+        setStatus(err.message, true);
+      }
+    }
+
+    async function loadSavedAnalysis(analysisId) {
+      if (!currentProjectId) return;
+      if (analysisId === currentAnalysisId && sessionId) return;
+
+      await saveCurrentAnalysisState();
+      setStatus("저장된 분석 불러오는 중…");
+      try {
+        const res = await fetch(
+          `/api/projects/${currentProjectId}/analyses/${analysisId}/load`,
+          { method: "POST" }
+        );
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "분석 불러오기 실패");
+
+        currentAnalysisId = data.analysis_id;
+        applySessionPayload(data);
+        switchTab("data");
+        setStatus(`「${data.analysis_title || data.filename}」 분석을 불러왔습니다.`);
+        highlightActiveProjectAndAnalysis();
+      } catch (err) {
+        setStatus(err.message, true);
+      }
+    }
+
+    async function renameAnalysisItem(analysisId, currentTitle) {
+      if (!currentProjectId) return;
+      const next = prompt("분석 이름 수정", currentTitle || "");
+      if (next === null) return;
+      const title = String(next).trim();
+      if (!title) {
+        setStatus("이름이 비어있습니다.", true);
+        return;
+      }
+      try {
+        const res = await fetch(
+          `/api/projects/${currentProjectId}/analyses/${analysisId}/rename`,
+          {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title }),
+          }
+        );
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "이름 수정 실패");
+        await loadProjectAnalyses(currentProjectId);
+        setStatus("이름을 수정했습니다.");
+      } catch (err) {
+        setStatus(err.message, true);
+      }
+    }
+
+    async function deleteAnalysisItem(analysisId, title) {
+      if (!currentProjectId) return;
+      const ok = confirm(`분석 기록을 삭제할까요?\n- ${title}\n(삭제하면 복구할 수 없습니다.)`);
+      if (!ok) return;
+      try {
+        // 현재 분석이면 상태 저장 후 정리
+        if (currentAnalysisId === analysisId) {
+          await saveCurrentAnalysisState();
+        }
+        const res = await fetch(
+          `/api/projects/${currentProjectId}/analyses/${analysisId}`,
+          { method: "DELETE" }
+        );
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "삭제 실패");
+
+        if (currentAnalysisId === analysisId) {
+          currentAnalysisId = null;
+          sessionId = null;
+          analysisData = null;
+          clearTable();
+          resetAnalysisTabsPlaceholder();
+          setStatus("삭제 완료. 다른 분석을 선택하거나 새로 업로드하세요.");
+        } else {
+          setStatus("삭제 완료.");
+        }
+        await loadProjectAnalyses(currentProjectId);
+      } catch (err) {
+        setStatus(err.message, true);
+      }
+    }
+
+    function applySessionPayload(data) {
+      sessionId = data.session_id;
+      if (data.project_id) currentProjectId = data.project_id;
+      if (data.analysis_id) currentAnalysisId = data.analysis_id;
+      currentFilename = data.filename || "";
+
+      distMetaLoaded = false;
+      distDateBounds = null;
+      if (distNumericColEl) distNumericColEl.innerHTML = "";
+      if (distGroupCheckboxesEl) distGroupCheckboxesEl.innerHTML = "";
+      if (distDateColEl) distDateColEl.innerHTML = "";
+      const distPlotEl = document.getElementById("dist-plot");
+      if (distPlotEl) distPlotEl.innerHTML = "";
+
+      setupDataDateMeta(data);
+      setupTargetOptions(data.columns || [], data.saved_state?.target_col || null);
+
+      const saved = data.saved_state;
+      if (saved) {
+        dataDateFilterActive = !!saved.date_filter_active;
+        pandasExprInput.value = saved.expression || "df";
+        activeExprEl.textContent = saved.expression || "df";
+        targetCol = saved.target_col || null;
+        if (saved.date_col && dataDateColEl) dataDateColEl.value = saved.date_col;
+        if (dataStartDateEl) dataStartDateEl.value = saved.date_start || "";
+        if (dataEndDateEl) dataEndDateEl.value = saved.date_end || "";
+      } else {
+        dataDateFilterActive = false;
+        pandasExprInput.value = data.expression || "df";
+        activeExprEl.textContent = data.expression || "df";
+        targetCol = null;
+      }
+
+      renderTable(data);
+      appSection.classList.add("visible");
+      updateMeta(data);
+
+      if (data.analysis_report) {
+        analysisData = data.analysis_report;
+        renderAnalysisTabs(data.analysis_report);
+      } else {
+        analysisData = null;
+        resetAnalysisTabsPlaceholder();
+      }
+    }
+
+    function showProjectForm(show) {
+      projectNewFormEl.classList.toggle("visible", show);
+      if (show) {
+        projectNameInputEl.value = "";
+        projectNameInputEl.focus();
+      }
+    }
+
+    async function createProject() {
+      const name = projectNameInputEl.value.trim();
+      if (!name) {
+        setStatus("프로젝트 이름을 입력하세요.", true);
+        return;
+      }
+      try {
+        const res = await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        const project = await res.json();
+        if (!res.ok) throw new Error(project.detail || "프로젝트 생성 실패");
+        showProjectForm(false);
+        await refreshProjects(project.id);
+        setStatus(`프로젝트 「${project.name}」을(를) 생성했습니다.`);
+      } catch (err) {
+        setStatus(err.message, true);
+      }
+    }
+
+    document.getElementById("new-project-btn").addEventListener("click", () => showProjectForm(true));
+    document.getElementById("cancel-project-btn").addEventListener("click", () => showProjectForm(false));
+    document.getElementById("create-project-btn").addEventListener("click", createProject);
+    projectNameInputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        createProject();
+      }
+    });
 
     function switchTab(tabName) {
       document.querySelectorAll(".tab-btn").forEach((btn) => {
@@ -560,6 +2113,29 @@
 
       if (tabName === "distribution") {
         maybeLoadDistributionMeta();
+      }
+      if (tabName === "numeric") {
+        // numeric 품질탭에서도 컬럼 메타가 필요
+        maybeLoadDistributionMeta().then(() => {
+          if (distMetaLoaded) {
+            setupQualityGroupCols({
+              categorical_cols: Array.from(
+                distGroupCheckboxesEl.querySelectorAll("input[type='checkbox']")
+              ).map((el) => el.value),
+            });
+          }
+        });
+      }
+      if (tabName === "categorical") {
+        maybeLoadDistributionMeta().then(() => {
+          if (distMetaLoaded) {
+            setupCategoricalGroupCols({
+              categorical_cols: Array.from(
+                distGroupCheckboxesEl.querySelectorAll("input[type='checkbox']")
+              ).map((el) => el.value),
+            });
+          }
+        });
       }
     }
 
@@ -613,9 +2189,59 @@
       items.forEach((name) => {
         const li = document.createElement("li");
         li.textContent = name;
+        if (targetCol && name === targetCol) li.classList.add("target-var");
         ul.appendChild(li);
       });
       return ul;
+    }
+
+    function renderStatsVarColumn(title, items) {
+      const col = document.createElement("div");
+      col.className = "stats-var-col";
+      const h4 = document.createElement("h4");
+      h4.textContent = title;
+      col.appendChild(h4);
+      const scroll = document.createElement("div");
+      scroll.className = "stats-var-scroll";
+      scroll.appendChild(renderVarList(items));
+      col.appendChild(scroll);
+      return col;
+    }
+
+    function renderStatsDescribeColumn(title, colNames, describes) {
+      const col = document.createElement("div");
+      col.className = "stats-describe-col";
+      const heading = document.createElement("h4");
+      heading.className = "stats-describe-col-title";
+      heading.textContent = title;
+      col.appendChild(heading);
+
+      const scroll = document.createElement("div");
+      scroll.className = "stats-describe-scroll";
+
+      if (!colNames.length) {
+        const empty = document.createElement("p");
+        empty.className = "stats-describe-empty";
+        empty.textContent = "(없음)";
+        scroll.appendChild(empty);
+      } else {
+        colNames.forEach((colName) => {
+          const card = document.createElement("div");
+          card.className = "describe-mini-card";
+          const h4 = document.createElement("h4");
+          h4.textContent = colName;
+          if (targetCol && colName === targetCol) h4.classList.add("target-var");
+          card.appendChild(h4);
+          if (describes[colName]) {
+            const table = buildStatsTable(describes[colName]);
+            table.classList.add("stats-table", "stats-table-compact");
+            card.appendChild(table);
+          }
+          scroll.appendChild(card);
+        });
+      }
+      col.appendChild(scroll);
+      return col;
     }
 
     function renderAnalysisTabs(data) {
@@ -635,94 +2261,30 @@
       badge.textContent = `${shape.rows} rows × ${shape.columns} columns`;
       overview.appendChild(badge);
 
-      const groups = [
-        ["날짜·시간 변수", variables.datetime],
-        ["범주형 변수", variables.categorical],
-        ["수치형 변수", variables.numeric],
-      ];
-      groups.forEach(([title, cols]) => {
-        const h4 = document.createElement("h4");
-        h4.textContent = title;
-        overview.appendChild(h4);
-        overview.appendChild(renderVarList(cols));
-      });
+      const varColumns = document.createElement("div");
+      varColumns.className = "stats-var-columns";
+      varColumns.appendChild(renderStatsVarColumn("날짜·시간 변수", variables.datetime));
+      varColumns.appendChild(renderStatsVarColumn("범주형 변수", variables.categorical));
+      varColumns.appendChild(renderStatsVarColumn("수치형 변수", variables.numeric));
+      overview.appendChild(varColumns);
       statsRoot.appendChild(overview);
 
-      const allCols = [
-        ...variables.datetime,
-        ...variables.categorical,
-        ...variables.numeric,
-      ];
-      allCols.forEach((colName) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        const h3 = document.createElement("h3");
-        h3.textContent = `${colName} — describe()`;
-        card.appendChild(h3);
-        if (describes[colName]) {
-          card.appendChild(wrapStatsTable(buildStatsTable(describes[colName])));
-        }
-        statsRoot.appendChild(card);
-      });
-
-      // Numeric 탭
-      const numRoot = document.getElementById("numeric-content");
-      numRoot.innerHTML = "";
-      if (!variables.numeric.length) {
-        numRoot.className = "placeholder";
-        numRoot.textContent = "수치형 변수가 없습니다.";
-      } else {
-        numRoot.className = "";
-        const numCard = document.createElement("div");
-        numCard.className = "card";
-        numCard.innerHTML = "<h3>수치형 변수 목록</h3>";
-        numCard.appendChild(renderVarList(variables.numeric));
-        numRoot.appendChild(numCard);
-
-        if (data.numeric_summary) {
-          const sumCard = document.createElement("div");
-          sumCard.className = "card";
-          sumCard.innerHTML = "<h3>수치형 describe() 요약</h3>";
-          sumCard.appendChild(wrapStatsTable(buildStatsTable(data.numeric_summary)));
-          numRoot.appendChild(sumCard);
-        }
-
-        variables.numeric.forEach((colName) => {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `<h3>${colName}</h3>`;
-          if (describes[colName]) {
-            card.appendChild(wrapStatsTable(buildStatsTable(describes[colName])));
-          }
-          numRoot.appendChild(card);
-        });
-      }
-
-      // Categorical 탭
-      const catRoot = document.getElementById("categorical-content");
-      catRoot.innerHTML = "";
-      const catCols = [...variables.categorical, ...variables.datetime];
-      if (!catCols.length) {
-        catRoot.className = "placeholder";
-        catRoot.textContent = "범주형·날짜 변수가 없습니다.";
-      } else {
-        catRoot.className = "";
-        const catCard = document.createElement("div");
-        catCard.className = "card";
-        catCard.innerHTML = "<h3>범주형·날짜 변수 목록</h3>";
-        catCard.appendChild(renderVarList(catCols));
-        catRoot.appendChild(catCard);
-
-        catCols.forEach((colName) => {
-          const card = document.createElement("div");
-          card.className = "card";
-          card.innerHTML = `<h3>${colName} — describe()</h3>`;
-          if (describes[colName]) {
-            card.appendChild(wrapStatsTable(buildStatsTable(describes[colName])));
-          }
-          catRoot.appendChild(card);
-        });
-      }
+      const describeSection = document.createElement("div");
+      describeSection.className = "stats-describe-section";
+      describeSection.innerHTML = "<h3>변수별 describe()</h3>";
+      const describeColumns = document.createElement("div");
+      describeColumns.className = "stats-describe-columns";
+      describeColumns.appendChild(
+        renderStatsDescribeColumn("날짜·시간", variables.datetime, describes)
+      );
+      describeColumns.appendChild(
+        renderStatsDescribeColumn("범주형", variables.categorical, describes)
+      );
+      describeColumns.appendChild(
+        renderStatsDescribeColumn("수치형", variables.numeric, describes)
+      );
+      describeSection.appendChild(describeColumns);
+      statsRoot.appendChild(describeSection);
     }
 
     function updateMeta(data) {
@@ -740,6 +2302,7 @@
         const th = document.createElement("th");
         th.textContent = col;
         th.title = col;
+        if (targetCol && col === targetCol) th.classList.add("target-col-header");
         headRow.appendChild(th);
       });
       tableHead.appendChild(headRow);
@@ -772,10 +2335,11 @@
 
       for (let ri = startRow; ri < endRow; ri++) {
         const tr = document.createElement("tr");
-        rows[ri].forEach((cell) => {
+        rows[ri].forEach((cell, ci) => {
           const td = document.createElement("td");
           td.textContent = cell;
           td.title = cell;
+          if (targetCol && columns[ci] === targetCol) td.classList.add("target-col-cell");
           tr.appendChild(td);
         });
         fragment.appendChild(tr);
@@ -817,6 +2381,22 @@
       renderVirtualRows();
     }
 
+    function setupTargetOptions(columns, selected) {
+      if (!targetColEl) return;
+      targetColEl.innerHTML = "";
+      const opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = "(선택 안 함)";
+      targetColEl.appendChild(opt0);
+      (columns || []).forEach((c) => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        targetColEl.appendChild(opt);
+      });
+      targetColEl.value = selected || "";
+    }
+
     function clearTable() {
       tableHead.innerHTML = "";
       tableBody.innerHTML = "";
@@ -834,28 +2414,133 @@
       throw new Error(detail || "요청 실패");
     }
 
+    const dataDateColEl = document.getElementById("data-date-col");
+    const dataStartDateEl = document.getElementById("data-start-date");
+    const dataEndDateEl = document.getElementById("data-end-date");
+    const dataDateSectionEl = document.getElementById("data-date-section");
+    const dataDateEmptyEl = document.getElementById("data-date-empty");
+    const dataDateToolbarEl = document.getElementById("data-date-toolbar");
+    const dataDateToggleEl = document.getElementById("data-date-toggle");
+    const applyDateBtn = document.getElementById("apply-date-btn");
+    const clearDateBtn = document.getElementById("clear-date-btn");
+    let dataDateBounds = null;
+    let dataDateFilterActive = false;
+    const DATE_FILTER_COLLAPSED_KEY = "ada_date_filter_collapsed";
+
+    function setDateFilterCollapsed(collapsed) {
+      if (!dataDateToolbarEl) return;
+      dataDateToolbarEl.classList.toggle("collapsed", !!collapsed);
+      if (dataDateToggleEl) dataDateToggleEl.textContent = collapsed ? "▾" : "▴";
+      try {
+        localStorage.setItem(DATE_FILTER_COLLAPSED_KEY, collapsed ? "1" : "0");
+      } catch (_) {}
+    }
+
+    // 초기 상태 복원
+    try {
+      const collapsed = localStorage.getItem(DATE_FILTER_COLLAPSED_KEY) === "1";
+      setDateFilterCollapsed(collapsed);
+    } catch (_) {}
+
+    dataDateToggleEl?.addEventListener("click", () => {
+      const next = !dataDateToolbarEl?.classList.contains("collapsed");
+      setDateFilterCollapsed(next);
+    });
+
+    function getDataDatePayload() {
+      if (!dataDateFilterActive || !dataDateColEl?.value) {
+        return { date_col: null, date_start: null, date_end: null };
+      }
+      return {
+        date_col: dataDateColEl.value,
+        date_start: dataStartDateEl?.value || null,
+        date_end: dataEndDateEl?.value || null,
+      };
+    }
+
+    function setupDataDateMeta(meta) {
+      dataDateBounds = meta.date_bounds || {};
+      const dtCols = meta.datetime_cols || [];
+      const dateToolbar = document.getElementById("data-date-toolbar");
+
+      if (!dtCols.length) {
+        if (dateToolbar) dateToolbar.style.display = "none";
+        dataDateFilterActive = false;
+        return;
+      }
+
+      if (dateToolbar) dateToolbar.style.display = "";
+      if (dataDateSectionEl) dataDateSectionEl.style.display = "";
+      if (dataDateEmptyEl) dataDateEmptyEl.style.display = "none";
+
+      dataDateColEl.innerHTML = "";
+      dtCols.forEach((c) => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        dataDateColEl.appendChild(opt);
+      });
+      dataDateColEl.value = dtCols[0];
+      dataDateFilterActive = false;
+    }
+
+    function applyDataQuickRange(range) {
+      const dc = dataDateColEl?.value;
+      const bounds = dc && dataDateBounds ? dataDateBounds[dc] : null;
+      if (!bounds?.max) return;
+
+      const end = isoToDateObj(bounds.max);
+      const msPerDay = 24 * 60 * 60 * 1000;
+      let days = 0;
+      if (range === "7d") days = 7;
+      if (range === "1m") days = 30;
+      if (range === "3m") days = 90;
+      if (range === "6m") days = 180;
+
+      const start = new Date(end.getTime() - days * msPerDay);
+      const toISO = (dt) => dt.toISOString().slice(0, 10);
+      if (dataStartDateEl) dataStartDateEl.value = toISO(start);
+      if (dataEndDateEl) dataEndDateEl.value = toISO(end);
+      dataDateFilterActive = true;
+    }
+
+    function isoToDateObj(isoDate) {
+      const [y, m, d] = isoDate.split("-").map((x) => Number(x));
+      return new Date(y, m - 1, d);
+    }
+
     async function runQuery(expression) {
       if (!sessionId) {
         setStatus("먼저 파일을 업로드하세요.", true);
         return;
       }
       applyExprBtn.disabled = true;
+      if (applyDateBtn) applyDateBtn.disabled = true;
       setStatus("표현식 실행 중…");
       try {
         const res = await fetch("/query", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ session_id: sessionId, expression }),
+          body: JSON.stringify({
+            session_id: sessionId,
+            expression,
+            ...getDataDatePayload(),
+          }),
         });
         const data = await res.json();
         if (!res.ok) await parseError(res, data);
         renderTable(data);
         updateMeta(data);
-        setStatus(`적용됨: ${data.expression}`);
+        let msg = `적용됨: ${data.expression}`;
+        if (data.date_filtered && dataDateColEl?.value) {
+          msg += ` · 날짜(${dataDateColEl.value})`;
+        }
+        setStatus(msg);
       } catch (err) {
         setStatus(err.message, true);
       } finally {
         applyExprBtn.disabled = false;
+        if (applyDateBtn) applyDateBtn.disabled = false;
       }
     }
 
@@ -876,6 +2561,10 @@
         if (!res.ok) await parseError(res, data);
         renderAnalysisTabs(data);
         switchTab("statistics");
+        if (currentProjectId) {
+          await loadProjectAnalyses(currentProjectId);
+          highlightActiveProjectAndAnalysis();
+        }
         setStatus(
           `자동분석 완료: ${data.shape.rows}행 × ${data.shape.columns}열 · Statistics 탭을 확인하세요.`
         );
@@ -886,8 +2575,55 @@
       }
     }
 
+    document.querySelectorAll(".pandas-example-code").forEach((el) => {
+      el.addEventListener("click", () => {
+        pandasExprInput.value = el.dataset.expr || "";
+        pandasExprInput.focus();
+      });
+    });
+
     applyExprBtn.addEventListener("click", () => runQuery(pandasExprInput.value.trim() || "df"));
-    resetExprBtn.addEventListener("click", () => { pandasExprInput.value = "df"; runQuery("df"); });
+    resetExprBtn.addEventListener("click", () => {
+      pandasExprInput.value = "df";
+      activeExprEl.textContent = "df";
+      dataDateFilterActive = false;
+      if (dataStartDateEl) dataStartDateEl.value = "";
+      if (dataEndDateEl) dataEndDateEl.value = "";
+      runQuery("df");
+    });
+
+    targetColEl?.addEventListener("change", async () => {
+      targetCol = targetColEl.value || null;
+      if (tableData?.columns?.length) {
+        renderTableHeader(tableData.columns);
+        renderVirtualRows();
+      }
+      if (analysisData) renderAnalysisTabs(analysisData);
+      await saveCurrentAnalysisState();
+    });
+    applyDateBtn?.addEventListener("click", () => {
+      if (!dataDateColEl?.value) {
+        setStatus("날짜 컬럼이 없습니다.", true);
+        return;
+      }
+      dataDateFilterActive = true;
+      runQuery(pandasExprInput.value.trim() || "df");
+    });
+    clearDateBtn?.addEventListener("click", () => {
+      dataDateFilterActive = false;
+      if (dataStartDateEl) dataStartDateEl.value = "";
+      if (dataEndDateEl) dataEndDateEl.value = "";
+      runQuery(pandasExprInput.value.trim() || "df");
+    });
+    document.querySelectorAll("#data-quick-buttons button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        applyDataQuickRange(btn.dataset.range);
+        runQuery(pandasExprInput.value.trim() || "df");
+      });
+    });
+    dataDateColEl?.addEventListener("change", () => {
+      dataDateFilterActive = false;
+    });
     pandasExprInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") { e.preventDefault(); runQuery(pandasExprInput.value.trim() || "df"); }
     });
@@ -897,45 +2633,60 @@
       const file = fileInput.files?.[0];
       if (!file) return;
 
+      if (!currentProjectId) {
+        setStatus("왼쪽에서 프로젝트를 먼저 선택하거나 생성하세요.", true);
+        fileInput.value = "";
+        return;
+      }
+
+      await saveCurrentAnalysisState();
+
       fileInput.disabled = true;
       uploadTriggerBtn.disabled = true;
+      uploadProgressForcedHidden = false;
+      showUploadProgress(file.name);
       setStatus("업로드 중…");
       const form = new FormData();
       form.append("file", file);
+      form.append("project_id", currentProjectId);
       try {
-        const res = await fetch("/upload", { method: "POST", body: form });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.detail || "업로드 실패");
+        const data = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "/upload");
+          xhr.responseType = "json";
+          xhr.upload.onprogress = (e) => {
+            if (!e.lengthComputable) return;
+            const pct = (e.loaded / e.total) * 100;
+            // 업로드(전송) 진행률만 측정 가능. 서버 처리 시간까지 포함하려면 100%에 바로 도달하지 않게 캡.
+            setUploadProgressCapped(pct, 95);
+          };
+          xhr.upload.onloadend = () => {
+            // 전송은 끝났지만, 서버가 파싱/저장/응답 만드는 시간이 남아있을 수 있음
+            if (uploadProgressNameEl) uploadProgressNameEl.textContent = "서버 처리 중…";
+            setUploadProgress(95);
+          };
+          xhr.onerror = () => reject(new Error("업로드 실패"));
+          xhr.onload = () => {
+            const resJson = xhr.response || {};
+            if (xhr.status < 200 || xhr.status >= 300) {
+              reject(new Error(resJson.detail || "업로드 실패"));
+              return;
+            }
+            setUploadProgress(100);
+            resolve(resJson);
+          };
+          xhr.send(form);
+        });
 
-        currentFilename = data.filename || "";
-        analysisData = null;
-        // Distribution 탭 컬럼/날짜 메타를 다시 로딩
-        distMetaLoaded = false;
-        distDateBounds = null;
-        if (distNumericColEl) distNumericColEl.innerHTML = "";
-        if (distGroupCheckboxesEl) distGroupCheckboxesEl.innerHTML = "";
-        if (distDateColEl) distDateColEl.innerHTML = "";
-        const distPlotEl = document.getElementById("dist-plot");
-        if (distPlotEl) distPlotEl.innerHTML = "";
-
-        pandasExprInput.value = "df";
-        activeExprEl.textContent = "df";
-        renderTable(data);
-        appSection.classList.add("visible");
+        applySessionPayload(data);
         switchTab("data");
-        updateMeta(data);
-
-        document.getElementById("statistics-content").innerHTML = "Data 탭에서 자동분석을 실행하세요.";
-        document.getElementById("statistics-content").className = "placeholder";
-        document.getElementById("numeric-content").innerHTML = "자동분석 후 수치형 변수 요약이 표시됩니다.";
-        document.getElementById("numeric-content").className = "placeholder";
-        document.getElementById("categorical-content").innerHTML = "자동분석 후 범주형 변수 요약이 표시됩니다.";
-        document.getElementById("categorical-content").className = "placeholder";
-
-        setStatus("업로드 완료. pandas 필터 또는 자동분석을 사용하세요.");
+        await loadProjectAnalyses(currentProjectId);
+        highlightActiveProjectAndAnalysis();
+        setStatus("업로드 완료. pandas 필터를 쓰거나 Statistics 탭에서 자동분석을 실행하세요.");
       } catch (err) {
         setStatus(err.message, true);
       } finally {
+        hideUploadProgress();
         fileInput.disabled = false;
         uploadTriggerBtn.disabled = false;
       }
@@ -954,23 +2705,29 @@
     const distChartTypeEl = document.getElementById("dist-chart-type");
     const distNumericColEl = document.getElementById("dist-numeric-col");
     const distGroupCheckboxesEl = document.getElementById("dist-groupby-checkboxes");
-    const distMaxGroupsEl = document.getElementById("dist-max-groups");
+    const distPerRowEl = document.getElementById("dist-per-row");
+    const distModeEls = document.querySelectorAll('input[name="dist-mode"]');
     const distDateColEl = document.getElementById("dist-date-col");
     const distStartDateEl = document.getElementById("dist-start-date");
     const distEndDateEl = document.getElementById("dist-end-date");
     const distPlotBtn = document.getElementById("dist-plot-btn");
     const distStatusEl = document.getElementById("dist-status");
+    const distPerRowFieldEl = document.getElementById("dist-per-row-field");
 
     function distSetStatus(msg, isError = false) {
       distStatusEl.textContent = msg || "";
       distStatusEl.classList.toggle("error", isError);
     }
 
-    function isoToDateObj(isoDate) {
-      // YYYY-MM-DD -> Date (로컬 기준)
-      const [y, m, d] = isoDate.split("-").map((x) => Number(x));
-      return new Date(y, m - 1, d);
+    function updateDistModeUI() {
+      const mode = Array.from(distModeEls).find((el) => el.checked)?.value || "combined";
+      if (distPerRowFieldEl) {
+        distPerRowFieldEl.style.display = mode === "separate" ? "" : "none";
+      }
     }
+
+    distModeEls.forEach((el) => el.addEventListener("change", updateDistModeUI));
+    updateDistModeUI();
 
     function setDateInputs(startISO, endISO) {
       if (startISO) distStartDateEl.value = startISO;
@@ -1017,7 +2774,6 @@
         group_cols,
         date_start: distStartDateEl.value || null,
         date_end: distEndDateEl.value || null,
-        max_groups: Number(distMaxGroupsEl.value || 5),
       };
 
       distPlotBtn.disabled = true;
@@ -1035,6 +2791,8 @@
           chartType: distChartTypeEl.value,
           numericCol,
           groups: data.groups || [],
+          mode: Array.from(distModeEls).find((el) => el.checked)?.value || "combined",
+          perRow: Number(distPerRowEl?.value || 2),
         });
         distSetStatus(
           `필터 완료: ${data.filtered_rows} rows · ${data.groups.length} 그룹`
@@ -1114,6 +2872,376 @@
       }
     }
 
+    // -----------------------------
+    // Numeric quality tab
+    // -----------------------------
+    const qualityGroupColsEl = document.getElementById("quality-group-cols");
+    const qualityGroupValuesWrapEl = document.getElementById("quality-group-values");
+    const qualitySelectAllBtn = document.getElementById("quality-select-all-btn");
+    const qualityClearBtn = document.getElementById("quality-clear-btn");
+    const qualityRunBtn = document.getElementById("quality-run-btn");
+    const qualityStatusEl = document.getElementById("quality-status");
+    const qualityHeatmapEl = document.getElementById("quality-heatmap");
+    const qualityTableEl = document.getElementById("quality-table");
+    const qualityMetricEls = document.querySelectorAll('input[name="quality-metric"]');
+    let qualityGroupColsInitialized = false;
+
+    function qualitySetStatus(msg, isError = false) {
+      if (!qualityStatusEl) return;
+      qualityStatusEl.textContent = msg || "";
+      qualityStatusEl.classList.toggle("error", isError);
+    }
+
+    function getSelectedQualityMetric() {
+      return Array.from(qualityMetricEls).find((el) => el.checked)?.value || "missing_rate";
+    }
+
+    function getSelectedQualityGroupCols() {
+      if (!qualityGroupColsEl) return [];
+      return Array.from(qualityGroupColsEl.querySelectorAll("input[type='checkbox']:checked"))
+        .map((cb) => cb.value)
+        .slice(0, 4);
+    }
+
+    function getSelectedQualityGroupValues() {
+      if (!qualityGroupValuesWrapEl) return [];
+      return Array.from(qualityGroupValuesWrapEl.querySelectorAll("input[type='checkbox']:checked"))
+        .map((cb) => cb.value);
+    }
+
+    function renderQualityGroupValueOptions(labels) {
+      if (!qualityGroupValuesWrapEl) return;
+      qualityGroupValuesWrapEl.innerHTML = "";
+      (labels || []).forEach((label) => {
+        const id = `qv_${String(label).replace(/[^a-zA-Z0-9_]/g, "_")}`;
+        const wrap = document.createElement("label");
+        wrap.className = "checkbox-item";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = label;
+        input.id = id;
+        const span = document.createElement("span");
+        span.textContent = label;
+        wrap.appendChild(input);
+        wrap.appendChild(span);
+        qualityGroupValuesWrapEl.appendChild(wrap);
+      });
+    }
+
+    function setupQualityGroupCols(meta) {
+      if (!qualityGroupColsEl) return;
+      qualityGroupColsEl.innerHTML = "";
+      const cols = meta?.categorical_cols || [];
+      cols.forEach((c, idx) => {
+        const id = `qgrp_${String(c).replace(/[^a-zA-Z0-9_]/g, "_")}`;
+        const wrap = document.createElement("label");
+        wrap.className = "checkbox-item";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = c;
+        input.id = id;
+        // 기본 2개 선택(처음 1회만)
+        if (!qualityGroupColsInitialized && idx < 2) input.checked = true;
+        input.addEventListener("change", () => {
+          const checked = getSelectedQualityGroupCols();
+          if (checked.length > 4) {
+            input.checked = false;
+            qualitySetStatus("그룹바이는 최대 4개까지 선택할 수 있습니다.", true);
+            return;
+          }
+          qualitySetStatus("");
+        });
+        const span = document.createElement("span");
+        span.textContent = c;
+        wrap.appendChild(input);
+        wrap.appendChild(span);
+        qualityGroupColsEl.appendChild(wrap);
+      });
+      qualityGroupColsInitialized = true;
+    }
+
+    function renderQualityTable(overall, metricKey) {
+      if (!qualityTableEl) return;
+      qualityTableEl.innerHTML = "";
+      const table = document.createElement("table");
+      table.className = "stats-table";
+      const thead = document.createElement("thead");
+      thead.innerHTML = "<tr><th>컬럼</th><th>결측</th><th>결측%</th><th>0값</th><th>0값%</th></tr>";
+      table.appendChild(thead);
+      const tbody = document.createElement("tbody");
+      const rows = Array.isArray(overall) ? overall.slice() : [];
+      rows.sort((a, b) => (b?.[metricKey] || 0) - (a?.[metricKey] || 0));
+      rows.forEach((r) => {
+        const tr = document.createElement("tr");
+        const nameTd = document.createElement("td");
+        nameTd.textContent = r.col;
+        if (targetCol && r.col === targetCol) nameTd.classList.add("target-col-cell");
+        tr.appendChild(nameTd);
+
+        const missTd = document.createElement("td");
+        missTd.textContent = String(r.missing_count ?? "");
+        tr.appendChild(missTd);
+        const missRateTd = document.createElement("td");
+        missRateTd.textContent = `${((r.missing_rate || 0) * 100).toFixed(2)}%`;
+        tr.appendChild(missRateTd);
+
+        const zeroTd = document.createElement("td");
+        zeroTd.textContent = String(r.zero_count ?? "");
+        tr.appendChild(zeroTd);
+        const zeroRateTd = document.createElement("td");
+        zeroRateTd.textContent = `${((r.zero_rate || 0) * 100).toFixed(2)}%`;
+        tr.appendChild(zeroRateTd);
+
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      qualityTableEl.appendChild(wrapStatsTable(table));
+    }
+
+    function renderQualityHeatmap({ numericCols, groups, metricKey, groupCols }) {
+      if (!qualityHeatmapEl) return;
+      qualityHeatmapEl.innerHTML = "";
+
+      const safeGroups = Array.isArray(groups) ? groups : [];
+      if (!safeGroups.length) {
+        Plotly.newPlot(qualityHeatmapEl, [], { title: "그룹바이 없이 히트맵은 표시되지 않습니다." });
+        return;
+      }
+
+      const yLabels = safeGroups.map((g) => `${g.group} (${g.count})`);
+      const z = safeGroups.map((g) => {
+        const map = {};
+        (g.rows || []).forEach((r) => (map[r.col] = r[metricKey] || 0));
+        return (numericCols || []).map((c) => map[c] ?? 0);
+      });
+
+      Plotly.newPlot(
+        qualityHeatmapEl,
+        [
+          {
+            type: "heatmap",
+            z,
+            x: numericCols,
+            y: yLabels,
+            colorscale: "Reds",
+            zmin: 0,
+            zmax: 1,
+            hovertemplate: "%{y}<br>%{x}<br>" + (metricKey === "zero_rate" ? "0값" : "결측") + ": %{z:.2%}<extra></extra>",
+          },
+        ],
+        {
+          title: `${(groupCols || []).join(" / ")} 기준 ${(metricKey === "zero_rate" ? "0값" : "결측")} 비율 히트맵`,
+          xaxis: { title: "수치형 컬럼", tickangle: -30 },
+          yaxis: { title: "그룹", automargin: true },
+          margin: { l: 120, r: 20, t: 50, b: 90 },
+        }
+      );
+    }
+
+    async function runQualityAnalysis() {
+      if (!sessionId) {
+        qualitySetStatus("먼저 Data 탭에서 파일을 업로드하세요.", true);
+        return;
+      }
+
+      const metricKey = getSelectedQualityMetric();
+      const groupCols = getSelectedQualityGroupCols();
+      const groupValues = getSelectedQualityGroupValues();
+
+      qualityRunBtn.disabled = true;
+      qualitySetStatus("분석 중…");
+      try {
+        const res = await fetch("/quality/numeric", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session_id: sessionId,
+            group_cols: groupCols,
+            group_values: groupValues.length ? groupValues : null,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "품질 분석 실패");
+
+        renderQualityTable(data.overall || [], metricKey);
+        // 그룹 목록을 받아오면 그룹 값 선택 UI 생성(상위 200개만)
+        if (Array.isArray(data.groups) && data.groups.length) {
+          const labels = data.groups.slice(0, 200).map((g) => `${g.group}`);
+          renderQualityGroupValueOptions(labels);
+        } else {
+          renderQualityGroupValueOptions([]);
+        }
+        renderQualityHeatmap({
+          numericCols: data.numeric_cols || [],
+          groups: data.groups || [],
+          metricKey,
+          groupCols: data.group_cols || groupCols,
+        });
+
+        const gInfo = groupCols.length ? ` · 그룹 ${data.groups?.length || 0}개` : "";
+        qualitySetStatus(`완료: ${data.rows} rows${gInfo}`);
+      } catch (err) {
+        qualitySetStatus(err.message || String(err), true);
+      } finally {
+        qualityRunBtn.disabled = false;
+      }
+    }
+
+    qualityRunBtn?.addEventListener("click", runQualityAnalysis);
+    qualityMetricEls.forEach((el) => el.addEventListener("change", () => {
+      // 라디오만 바뀌면 다시 그리기
+      runQualityAnalysis();
+    }));
+
+    qualitySelectAllBtn?.addEventListener("click", () => {
+      qualityGroupValuesWrapEl?.querySelectorAll("input[type='checkbox']").forEach((cb) => (cb.checked = true));
+    });
+    qualityClearBtn?.addEventListener("click", () => {
+      qualityGroupValuesWrapEl?.querySelectorAll("input[type='checkbox']").forEach((cb) => (cb.checked = false));
+    });
+
+    // -----------------------------
+    // Categorical count tab
+    // -----------------------------
+    const catGroupColsEl = document.getElementById("cat-group-cols");
+    const catRunBtn = document.getElementById("cat-run-btn");
+    const catStatusEl = document.getElementById("cat-status");
+    const catBarEl = document.getElementById("cat-bar");
+    const catTableEl = document.getElementById("cat-table");
+    let catGroupColsInitialized = false;
+
+    function catSetStatus(msg, isError = false) {
+      if (!catStatusEl) return;
+      catStatusEl.textContent = msg || "";
+      catStatusEl.classList.toggle("error", isError);
+    }
+
+    function setupCategoricalGroupCols(meta) {
+      if (!catGroupColsEl) return;
+      const cols = meta?.categorical_cols || [];
+      catGroupColsEl.innerHTML = "";
+      cols.forEach((c, idx) => {
+        const id = `cgrp_${String(c).replace(/[^a-zA-Z0-9_]/g, "_")}`;
+        const wrap = document.createElement("label");
+        wrap.className = "checkbox-item";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.value = c;
+        input.id = id;
+        if (!catGroupColsInitialized && idx < 1) input.checked = true; // 기본 1개
+        input.addEventListener("change", () => {
+          const checked = Array.from(catGroupColsEl.querySelectorAll("input[type='checkbox']:checked")).map((cb) => cb.value);
+          if (checked.length > 10) {
+            input.checked = false;
+            catSetStatus("그룹바이는 최대 10개까지 선택할 수 있습니다.", true);
+            return;
+          }
+          catSetStatus("");
+        });
+        const span = document.createElement("span");
+        span.textContent = c;
+        wrap.appendChild(input);
+        wrap.appendChild(span);
+        catGroupColsEl.appendChild(wrap);
+      });
+      catGroupColsInitialized = true;
+    }
+
+    function getSelectedCatGroupCols() {
+      if (!catGroupColsEl) return [];
+      return Array.from(catGroupColsEl.querySelectorAll("input[type='checkbox']:checked"))
+        .map((cb) => cb.value)
+        .slice(0, 10);
+    }
+
+    function renderCatTable(labels, counts) {
+      if (!catTableEl) return;
+      catTableEl.innerHTML = "";
+      const table = document.createElement("table");
+      table.className = "stats-table";
+      const thead = document.createElement("thead");
+      thead.innerHTML = "<tr><th>그룹</th><th>Count</th></tr>";
+      table.appendChild(thead);
+      const tbody = document.createElement("tbody");
+      for (let i = 0; i < labels.length; i++) {
+        const tr = document.createElement("tr");
+        const td1 = document.createElement("td");
+        td1.textContent = labels[i];
+        tr.appendChild(td1);
+        const td2 = document.createElement("td");
+        td2.textContent = String(counts[i]);
+        tr.appendChild(td2);
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+      catTableEl.appendChild(wrapStatsTable(table));
+    }
+
+    function renderCatBar({ groupCols, labels, counts }) {
+      if (!catBarEl) return;
+      catBarEl.innerHTML = "";
+      if (!labels.length) {
+        Plotly.newPlot(catBarEl, [], { title: "표시할 값이 없습니다." });
+        return;
+      }
+
+      // 그룹이 많으면 가독성을 위해 가로 막대
+      const horizontal = labels.length > 18;
+      const height = Math.max(520, Math.min(2000, 220 + labels.length * (horizontal ? 18 : 10)));
+
+      const trace = horizontal
+        ? { type: "bar", x: counts, y: labels, orientation: "h" }
+        : { type: "bar", x: labels, y: counts };
+
+      Plotly.newPlot(
+        catBarEl,
+        [trace],
+        {
+          title: `${groupCols.join(" / ")} 그룹 카운트 (${labels.length} groups)`,
+          margin: horizontal
+            ? { l: 200, r: 20, t: 50, b: 50 }
+            : { l: 60, r: 20, t: 50, b: 140 },
+          height,
+          xaxis: horizontal ? { title: "Count" } : { title: "Group", tickangle: -30 },
+          yaxis: horizontal ? { title: "Group", automargin: true } : { title: "Count" },
+        }
+      );
+    }
+
+    async function runCategoricalCount() {
+      if (!sessionId) {
+        catSetStatus("먼저 Data 탭에서 파일을 업로드하세요.", true);
+        return;
+      }
+      const groupCols = getSelectedCatGroupCols();
+      if (!groupCols.length) {
+        catSetStatus("그룹바이 컬럼을 1개 이상 선택하세요.", true);
+        return;
+      }
+      catRunBtn.disabled = true;
+      catSetStatus("분석 중…");
+      try {
+        const res = await fetch("/quality/categorical_counts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: sessionId, group_cols: groupCols }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "분석 실패");
+        const labels = data.labels || [];
+        const counts = data.counts || [];
+        renderCatBar({ groupCols: data.group_cols || groupCols, labels, counts });
+        renderCatTable(labels, counts);
+        catSetStatus(`완료: ${data.total_groups} groups`);
+      } catch (err) {
+        catSetStatus(err.message || String(err), true);
+      } finally {
+        catRunBtn.disabled = false;
+      }
+    }
+
+    catRunBtn?.addEventListener("click", runCategoricalCount);
+
     function kdeEstimate(values, xs) {
       const n = values.length;
       if (n === 0) return xs.map(() => 0);
@@ -1166,14 +3294,148 @@
       return { centers, counts };
     }
 
-    function renderDistributionPlot({ chartType, numericCol, groups }) {
+    function minMax(values) {
+      let mn = Infinity;
+      let mx = -Infinity;
+      for (let i = 0; i < values.length; i++) {
+        const v = Number(values[i]);
+        if (!Number.isFinite(v)) continue;
+        if (v < mn) mn = v;
+        if (v > mx) mx = v;
+      }
+      if (!Number.isFinite(mn) || !Number.isFinite(mx)) return null;
+      return { min: mn, max: mx };
+    }
+
+    function paddedRange(minV, maxV, ratio = 0.04) {
+      const span = maxV - minV;
+      const pad = Math.max(span * ratio, span === 0 ? 1 : 0);
+      return { min: minV - pad, max: maxV + pad };
+    }
+
+    function renderDistributionPlot({ chartType, numericCol, groups, mode, perRow }) {
       const plotEl = document.getElementById("dist-plot");
       if (!plotEl) return;
 
       // 값 전부 기준 min/max
+      const safeGroups = Array.isArray(groups) ? groups : [];
+      if (!safeGroups.length) {
+        plotEl.innerHTML = "";
+        Plotly.newPlot(plotEl, [], { title: "표시할 값이 없습니다." });
+        return;
+      }
+
+      if (mode === "separate") {
+        const n = safeGroups.length;
+        const cols = Math.max(1, Math.floor(perRow || 2));
+        const rows = Math.ceil(n / cols);
+
+        plotEl.innerHTML = "";
+        plotEl.style.padding = "12px";
+
+        const grid = document.createElement("div");
+        grid.className = "dist-grid";
+        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+        grid.style.gridTemplateRows = `repeat(${rows}, auto)`;
+        plotEl.appendChild(grid);
+
+        safeGroups.forEach((g, i) => {
+          const cell = document.createElement("div");
+          cell.className = "dist-cell";
+          const cellPlot = document.createElement("div");
+          cellPlot.id = `dist-plot-cell-${i}`;
+          cellPlot.style.width = "100%";
+          cellPlot.style.height = "360px";
+          cell.appendChild(cellPlot);
+          grid.appendChild(cell);
+
+          const values = Array.isArray(g.values) ? g.values : [];
+          if (!values.length) {
+            Plotly.newPlot(cellPlot, [], { title: `${g.group}` });
+            return;
+          }
+
+          const mm = minMax(values);
+          if (!mm) {
+            Plotly.newPlot(cellPlot, [], { title: `${g.group}` });
+            return;
+          }
+          const vMin = mm.min;
+          const vMax = mm.max;
+          if (vMin === vMax) {
+            Plotly.newPlot(cellPlot, [], { title: `${g.group} (동일값)` });
+            return;
+          }
+          const pr = paddedRange(vMin, vMax);
+
+          if (chartType === "kde") {
+            const xsN = 120;
+            const xs = [];
+            for (let k = 0; k < xsN; k++) {
+              xs.push(pr.min + (k / (xsN - 1)) * (pr.max - pr.min));
+            }
+            if (values.length < 2) {
+              Plotly.newPlot(cellPlot, [], { title: `${g.group}` });
+              return;
+            }
+            const ys = kdeEstimate(values, xs);
+            Plotly.newPlot(
+              cellPlot,
+              [
+                {
+                  x: xs,
+                  y: ys,
+                  mode: "lines",
+                  name: g.group,
+                  line: { width: 2 },
+                },
+              ],
+              {
+                title: `${g.group}`,
+                xaxis: { title: numericCol, range: [pr.min, pr.max] },
+                yaxis: { title: "Density" },
+                margin: { l: 55, r: 15, t: 35, b: 45 },
+                showlegend: false,
+              }
+            );
+          } else {
+            const nbins = 25;
+            const binEdges = [];
+            for (let k = 0; k <= nbins; k++) {
+              binEdges.push(pr.min + (k / nbins) * (pr.max - pr.min));
+            }
+            const { centers, counts } = histogram(values, binEdges);
+            Plotly.newPlot(
+              cellPlot,
+              [
+                {
+                  x: centers,
+                  y: counts,
+                  type: "bar",
+                  name: g.group,
+                  opacity: 0.85,
+                },
+              ],
+              {
+                title: `${g.group}`,
+                xaxis: { title: numericCol, range: [pr.min, pr.max] },
+                yaxis: { title: "Count" },
+                margin: { l: 55, r: 15, t: 35, b: 45 },
+                showlegend: false,
+              }
+            );
+          }
+        });
+
+        return;
+      }
+
+      // combined mode
       const allValues = [];
-      (groups || []).forEach((g) => {
-        if (Array.isArray(g.values)) allValues.push(...g.values);
+      safeGroups.forEach((g) => {
+        if (!Array.isArray(g.values)) return;
+        // push(...arr)는 큰 배열에서 느리거나 실패할 수 있어 루프로 추가
+        for (let i = 0; i < g.values.length; i++) allValues.push(g.values[i]);
       });
 
       if (!allValues.length) {
@@ -1182,23 +3444,29 @@
         return;
       }
 
-      const vMin = Math.min(...allValues);
-      const vMax = Math.max(...allValues);
-
+      const mmAll = minMax(allValues);
+      if (!mmAll) {
+        plotEl.innerHTML = "";
+        Plotly.newPlot(plotEl, [], { title: "표시할 값이 없습니다." });
+        return;
+      }
+      const vMin = mmAll.min;
+      const vMax = mmAll.max;
       if (vMin === vMax) {
         Plotly.newPlot(plotEl, [], { title: "값이 모두 동일합니다." });
         return;
       }
+      const pr = paddedRange(vMin, vMax);
 
       if (chartType === "kde") {
         const xsN = 160;
         const xs = [];
         for (let i = 0; i < xsN; i++) {
-          xs.push(vMin + (i / (xsN - 1)) * (vMax - vMin));
+          xs.push(pr.min + (i / (xsN - 1)) * (pr.max - pr.min));
         }
 
         const traces = [];
-        groups.forEach((g, idx) => {
+        safeGroups.forEach((g) => {
           const vals = g.values || [];
           if (vals.length < 2) return;
           const ys = kdeEstimate(vals, xs);
@@ -1212,8 +3480,8 @@
         });
 
         Plotly.newPlot(plotEl, traces, {
-          title: `${numericCol} KDE (${groups.length} groups)`,
-          xaxis: { title: numericCol },
+          title: `${numericCol} KDE (${safeGroups.length} groups)`,
+          xaxis: { title: numericCol, range: [pr.min, pr.max] },
           yaxis: { title: "Density" },
           margin: { l: 60, r: 20, t: 40, b: 55 },
           legend: { orientation: "h" },
@@ -1222,11 +3490,11 @@
         const nbins = 30;
         const binEdges = [];
         for (let i = 0; i <= nbins; i++) {
-          binEdges.push(vMin + (i / nbins) * (vMax - vMin));
+          binEdges.push(pr.min + (i / nbins) * (pr.max - pr.min));
         }
 
         const traces = [];
-        groups.forEach((g) => {
+        safeGroups.forEach((g) => {
           const { centers, counts } = histogram(g.values || [], binEdges);
           traces.push({
             x: centers,
@@ -1240,12 +3508,14 @@
         Plotly.newPlot(plotEl, traces, {
           barmode: "group",
           title: `${numericCol} Histogram (bar)`,
-          xaxis: { title: numericCol },
+          xaxis: { title: numericCol, range: [pr.min, pr.max] },
           yaxis: { title: "Count" },
           margin: { l: 60, r: 20, t: 40, b: 55 },
         });
       }
     }
+
+    refreshProjects().catch((err) => setStatus(err.message, true));
   </script>
 </body>
 </html>
