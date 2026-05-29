@@ -545,6 +545,47 @@ class DistributionDataRequest(BaseModel):
     group_cols: list[str] = []
     date_start: str | None = None  # YYYY-MM-DD
     date_end: str | None = None  # YYYY-MM-DD
+    exclude_null: bool = True
+    exclude_zero: bool = False
+    exclude_values: list[float] = []
+    exclude_gte: float | None = None  # N 이상 제외 (값 >= N)
+    exclude_lte: float | None = None  # N 이하 제외 (값 <= N)
+    include_min: float | None = None  # 구간만: min <= 값 <= max
+    include_max: float | None = None
+    exclude_between_min: float | None = None  # 구간 제외
+    exclude_between_max: float | None = None
+
+
+def _apply_distribution_value_filters(
+    df_work: pd.DataFrame, col_name: str, body: DistributionDataRequest
+) -> pd.DataFrame:
+    col = df_work[col_name]
+    if body.exclude_null:
+        df_work = df_work.loc[col.notna()]
+        col = df_work[col_name]
+    if body.exclude_zero:
+        df_work = df_work.loc[col.isna() | (col != 0)]
+        col = df_work[col_name]
+    if body.exclude_values:
+        exclude_set = {float(v) for v in body.exclude_values}
+        df_work = df_work.loc[~col.isin(exclude_set)]
+        col = df_work[col_name]
+    if body.exclude_gte is not None:
+        df_work = df_work.loc[col < body.exclude_gte]
+        col = df_work[col_name]
+    if body.exclude_lte is not None:
+        df_work = df_work.loc[col > body.exclude_lte]
+        col = df_work[col_name]
+    if body.include_min is not None and body.include_max is not None:
+        lo = min(body.include_min, body.include_max)
+        hi = max(body.include_min, body.include_max)
+        df_work = df_work.loc[(col >= lo) & (col <= hi)]
+        col = df_work[col_name]
+    if body.exclude_between_min is not None and body.exclude_between_max is not None:
+        lo = min(body.exclude_between_min, body.exclude_between_max)
+        hi = max(body.exclude_between_min, body.exclude_between_max)
+        df_work = df_work.loc[(col < lo) | (col > hi)]
+    return df_work
 
 
 @app.post("/distribution/meta")
@@ -709,15 +750,15 @@ def distribution_data(body: DistributionDataRequest):
             str(df_work[date_col].max()) if len(df_work) else None
         )
 
-    # numeric 결측 제거
-    df_work = df_work.loc[df_work[body.numeric_col].notna()]
+    df_work = _apply_distribution_value_filters(df_work, body.numeric_col, body)
 
     group_cols = [c for c in body.group_cols if c in df_work.columns]
     MAX_VALUES_PER_GROUP = 5000
 
     records: list[dict[str, Any]] = []
     if not group_cols:
-        vals = df_work[body.numeric_col].astype(float).to_numpy()
+        series = df_work[body.numeric_col].astype(float)
+        vals = series.dropna().to_numpy()
         records = [{"group": "All", "values": vals.tolist(), "count": int(len(vals))}]
     else:
         grouped = df_work.groupby(group_cols, dropna=False)

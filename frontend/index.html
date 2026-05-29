@@ -1111,6 +1111,82 @@
       font-size: 0.9rem;
     }
 
+    .dist-value-filter-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.35rem;
+    }
+
+    .dist-exclude-custom {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .dist-exclude-custom label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: var(--text);
+    }
+
+    .dist-exclude-custom input {
+      width: 100%;
+      padding: 0.4rem 0.55rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      font-size: 0.85rem;
+    }
+
+    .dist-range-filters {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    @media (max-width: 520px) {
+      .dist-range-filters {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dist-range-item label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+      color: var(--text);
+    }
+
+    .dist-range-item input {
+      width: 100%;
+      padding: 0.38rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-size: 0.85rem;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+
+    .dist-range-span {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: end;
+      gap: 0.35rem;
+    }
+
+    .dist-range-span .range-sep {
+      padding-bottom: 0.45rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
     .checkbox-list {
       display: flex;
       gap: 0.35rem 0.75rem;
@@ -1467,6 +1543,66 @@
               <div class="field">
                 <label>범주형(그룹바이) 컬럼</label>
                 <div id="dist-groupby-checkboxes" class="checkbox-list"></div>
+              </div>
+
+              <div class="field">
+                <label>값 필터 (선택)</label>
+                <div class="dist-value-filter-row">
+                  <div class="checkbox-list" style="margin-top:0;">
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="dist-exclude-null" checked />
+                      <span>NaN 제외</span>
+                    </label>
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="dist-exclude-zero" />
+                      <span>0값 제외</span>
+                    </label>
+                  </div>
+                  <div class="dist-exclude-custom">
+                    <label for="dist-exclude-values">값 제외</label>
+                    <input
+                      type="text"
+                      id="dist-exclude-values"
+                      placeholder="예: 100, 220.5"
+                      autocomplete="off"
+                    />
+                  </div>
+                </div>
+                <div class="dist-range-filters">
+                  <div class="dist-range-item">
+                    <label for="dist-exclude-gte">이상 제외 (≥)</label>
+                    <input type="text" id="dist-exclude-gte" inputmode="decimal" placeholder="예: 100" autocomplete="off" />
+                  </div>
+                  <div class="dist-range-item">
+                    <label for="dist-exclude-lte">이하 제외 (≤)</label>
+                    <input type="text" id="dist-exclude-lte" inputmode="decimal" placeholder="예: 10" autocomplete="off" />
+                  </div>
+                  <div class="dist-range-span">
+                    <div class="dist-range-item">
+                      <label for="dist-include-min">구간만 (포함)</label>
+                      <input type="text" id="dist-include-min" inputmode="decimal" placeholder="최소" autocomplete="off" />
+                    </div>
+                    <span class="range-sep">~</span>
+                    <div class="dist-range-item">
+                      <label for="dist-include-max">&nbsp;</label>
+                      <input type="text" id="dist-include-max" inputmode="decimal" placeholder="최대" autocomplete="off" />
+                    </div>
+                  </div>
+                  <div class="dist-range-span">
+                    <div class="dist-range-item">
+                      <label for="dist-exclude-between-min">구간 제외</label>
+                      <input type="text" id="dist-exclude-between-min" inputmode="decimal" placeholder="최소" autocomplete="off" />
+                    </div>
+                    <span class="range-sep">~</span>
+                    <div class="dist-range-item">
+                      <label for="dist-exclude-between-max">&nbsp;</label>
+                      <input type="text" id="dist-exclude-between-max" inputmode="decimal" placeholder="최대" autocomplete="off" />
+                    </div>
+                  </div>
+                </div>
+                <p style="margin:0.35rem 0 0; color: var(--muted); font-size:0.8rem;">
+                  NaN·0·특정값 제외와 범위 필터를 함께 쓸 수 있습니다. 구간은 최소·최대를 모두 입력하세요.
+                </p>
               </div>
 
               <div class="field">
@@ -2713,6 +2849,77 @@
     const distPlotBtn = document.getElementById("dist-plot-btn");
     const distStatusEl = document.getElementById("dist-status");
     const distPerRowFieldEl = document.getElementById("dist-per-row-field");
+    const distExcludeNullEl = document.getElementById("dist-exclude-null");
+    const distExcludeZeroEl = document.getElementById("dist-exclude-zero");
+    const distExcludeValuesEl = document.getElementById("dist-exclude-values");
+    const distExcludeGteEl = document.getElementById("dist-exclude-gte");
+    const distExcludeLteEl = document.getElementById("dist-exclude-lte");
+    const distIncludeMinEl = document.getElementById("dist-include-min");
+    const distIncludeMaxEl = document.getElementById("dist-include-max");
+    const distExcludeBetweenMinEl = document.getElementById("dist-exclude-between-min");
+    const distExcludeBetweenMaxEl = document.getElementById("dist-exclude-between-max");
+
+    function parseDistOptionalNumber(el) {
+      const raw = el?.value?.trim();
+      if (!raw) return null;
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function getDistExcludeValues() {
+      const raw = distExcludeValuesEl?.value?.trim();
+      if (!raw) return [];
+      return raw
+        .split(/[,;\n]+/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .map(Number)
+        .filter((n) => Number.isFinite(n));
+    }
+
+    function getDistRangeFilters() {
+      const includeMin = parseDistOptionalNumber(distIncludeMinEl);
+      const includeMax = parseDistOptionalNumber(distIncludeMaxEl);
+      const excludeBetweenMin = parseDistOptionalNumber(distExcludeBetweenMinEl);
+      const excludeBetweenMax = parseDistOptionalNumber(distExcludeBetweenMaxEl);
+      return {
+        exclude_gte: parseDistOptionalNumber(distExcludeGteEl),
+        exclude_lte: parseDistOptionalNumber(distExcludeLteEl),
+        include_min: includeMin,
+        include_max: includeMax,
+        exclude_between_min: excludeBetweenMin,
+        exclude_between_max: excludeBetweenMax,
+      };
+    }
+
+    function buildDistFilterNote(rangeFilters) {
+      const notes = [
+        distExcludeNullEl?.checked ? "NaN 제외" : "NaN 포함",
+        distExcludeZeroEl?.checked ? "0 제외" : "0 포함",
+      ];
+      const customExclude = getDistExcludeValues();
+      if (customExclude.length) notes.push(`값 제외 ${customExclude.join(", ")}`);
+      if (rangeFilters.exclude_gte != null) notes.push(`≥${rangeFilters.exclude_gte} 제외`);
+      if (rangeFilters.exclude_lte != null) notes.push(`≤${rangeFilters.exclude_lte} 제외`);
+      if (rangeFilters.include_min != null && rangeFilters.include_max != null) {
+        const lo = Math.min(rangeFilters.include_min, rangeFilters.include_max);
+        const hi = Math.max(rangeFilters.include_min, rangeFilters.include_max);
+        notes.push(`${lo}~${hi}만`);
+      } else if (rangeFilters.include_min != null || rangeFilters.include_max != null) {
+        notes.push("구간만(최소·최대 모두 입력)");
+      }
+      if (rangeFilters.exclude_between_min != null && rangeFilters.exclude_between_max != null) {
+        const lo = Math.min(rangeFilters.exclude_between_min, rangeFilters.exclude_between_max);
+        const hi = Math.max(rangeFilters.exclude_between_min, rangeFilters.exclude_between_max);
+        notes.push(`${lo}~${hi} 제외`);
+      } else if (
+        rangeFilters.exclude_between_min != null ||
+        rangeFilters.exclude_between_max != null
+      ) {
+        notes.push("구간 제외(최소·최대 모두 입력)");
+      }
+      return notes.join(" · ");
+    }
 
     function distSetStatus(msg, isError = false) {
       distStatusEl.textContent = msg || "";
@@ -2767,6 +2974,7 @@
         distGroupCheckboxesEl.querySelectorAll("input[type='checkbox']:checked")
       ).map((cb) => cb.value);
 
+      const rangeFilters = getDistRangeFilters();
       const payload = {
         session_id: sessionId,
         date_col: distDateColEl?.value || null,
@@ -2774,6 +2982,10 @@
         group_cols,
         date_start: distStartDateEl.value || null,
         date_end: distEndDateEl.value || null,
+        exclude_null: !!distExcludeNullEl?.checked,
+        exclude_zero: !!distExcludeZeroEl?.checked,
+        exclude_values: getDistExcludeValues(),
+        ...rangeFilters,
       };
 
       distPlotBtn.disabled = true;
@@ -2795,7 +3007,7 @@
           perRow: Number(distPerRowEl?.value || 2),
         });
         distSetStatus(
-          `필터 완료: ${data.filtered_rows} rows · ${data.groups.length} 그룹`
+          `필터 완료: ${data.filtered_rows} rows · ${data.groups.length} 그룹 · ${buildDistFilterNote(rangeFilters)}`
         );
       } catch (err) {
         distSetStatus(err.message || String(err), true);
